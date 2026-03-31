@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title th:text="${titulo}">Registrar Usuario</title>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #f0f2f5;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem;
+        }
+        .card {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 4px 24px rgba(0,0,0,0.10);
+            padding: 2.5rem 3rem;
+            width: 100%;
+            max-width: 520px;
+        }
+        h2 {
+            color: #1a202c;
+            margin-bottom: 0.4rem;
+            font-size: 1.6rem;
+        }
+        .subtitle {
+            color: #718096;
+            font-size: 0.9rem;
+            margin-bottom: 2rem;
+        }
+        .form-group {
+            margin-bottom: 1.2rem;
+        }
+        label {
+            display: block;
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: #4a5568;
+            margin-bottom: 0.4rem;
+        }
+        input, select {
+            width: 100%;
+            padding: 0.65rem 0.9rem;
+            border: 1.5px solid #e2e8f0;
+            border-radius: 8px;
+            font-size: 0.95rem;
+            color: #2d3748;
+            transition: border-color 0.2s;
+            background: #f7fafc;
+        }
+        input:focus, select:focus {
+            outline: none;
+            border-color: #4299e1;
+            background: white;
+        }
+        .error-field {
+            border-color: #fc8181 !important;
+        }
+        .error-msg {
+            color: #e53e3e;
+            font-size: 0.8rem;
+            margin-top: 0.3rem;
+        }
+        .alert {
+            padding: 0.8rem 1rem;
+            border-radius: 8px;
+            margin-bottom: 1.5rem;
+            font-size: 0.9rem;
+        }
+        .alert-danger  { background: #fff5f5; color: #c53030; border: 1px solid #feb2b2; }
+        .alert-success { background: #f0fff4; color: #276749; border: 1px solid #9ae6b4; }
+        .row { display: flex; gap: 1rem; }
+        .row .form-group { flex: 1; }
+        .badge-rol {
+            display: inline-block;
+            padding: 2px 8px;
+            border-radius: 99px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            background: #ebf8ff;
+            color: #2b6cb0;
+        }
+        .btn-primary {
+            width: 100%;
+            padding: 0.75rem;
+            background: #3182ce;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.2s;
+            margin-top: 0.5rem;
+        }
+        .btn-primary:hover { background: #2b6cb0; }
+        .btn-secondary {
+            display: inline-block;
+            margin-top: 1rem;
+            color: #4299e1;
+            text-decoration: none;
+            font-size: 0.9rem;
+        }
+        .btn-secondary:hover { text-decoration: underline; }
+    </style>
+</head>
+<body>
+
+<div class="card">
+
+    <h2 th:text="${titulo}">Registrar Usuario</h2>
+    <p class="subtitle">Complete todos los campos requeridos</p>
+
+    <!-- Mensaje de error de negocio -->
+    <div class="alert alert-danger" th:if="${error}" th:text="${error}"></div>
+
+    <!-- Formulario -->
+    <form th:action="@{/usuarios/guardar}" th:object="${usuario}" method="post">
+
+        <!-- ID oculto para edición -->
+        <input type="hidden" th:field="*{id}"/>
+
+        <div class="row">
+            <div class="form-group">
+                <label for="nombre">Nombre *</label>
+                <input type="text" id="nombre" th:field="*{nombre}"
+                       th:classappend="${#fields.hasErrors('nombre')} ? 'error-field'"
+                       placeholder="Ej: Juan"/>
+                <span class="error-msg" th:if="${#fields.hasErrors('nombre')}"
+                      th:errors="*{nombre}"></span>
+            </div>
+            <div class="form-group">
+                <label for="apellido">Apellido *</label>
+                <input type="text" id="apellido" th:field="*{apellido}"
+                       th:classappend="${#fields.hasErrors('apellido')} ? 'error-field'"
+                       placeholder="Ej: Pérez"/>
+                <span class="error-msg" th:if="${#fields.hasErrors('apellido')}"
+                      th:errors="*{apellido}"></span>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label for="email">Email *</label>
+            <input type="email" id="email" th:field="*{email}"
+                   th:classappend="${#fields.hasErrors('email')} ? 'error-field'"
+                   placeholder="correo@empresa.com"/>
+            <span class="error-msg" th:if="${#fields.hasErrors('email')}"
+                  th:errors="*{email}"></span>
+        </div>
+
+        <div class="form-group">
+            <label for="username">Nombre de usuario *</label>
+            <input type="text" id="username" th:field="*{username}"
+                   th:classappend="${#fields.hasErrors('username')} ? 'error-field'"
+                   placeholder="Mínimo 4 caracteres"/>
+            <span class="error-msg" th:if="${#fields.hasErrors('username')}"
+                  th:errors="*{username}"></span>
+        </div>
+
+        <!-- Solo mostrar contraseña en creación (no en edición) -->
+        <div class="form-group" th:if="${usuario.id == null}">
+            <label for="password">Contraseña *</label>
+            <input type="password" id="password" th:field="*{password}"
+                   th:classappend="${#fields.hasErrors('password')} ? 'error-field'"
+                   placeholder="Mínimo 8 caracteres"/>
+            <span class="error-msg" th:if="${#fields.hasErrors('password')}"
+                  th:errors="*{password}"></span>
+        </div>
+
+        <!--  Selección de rol -->
+        <div class="form-group">
+            <label for="rol">Rol * <span class="badge-rol"></span></label>
+            <select id="rol" th:field="*{rol.id}"
+                    th:classappend="${#fields.hasErrors('rol')} ? 'error-field'">
+                <option value="">-- Seleccione un rol --</option>
+                <option th:each="r : ${roles}"
+                        th:value="${r.id}"
+                        th:text="${r.nombre}">
+                </option>
+            </select>
+            <span class="error-msg" th:if="${#fields.hasErrors('rol')}"
+                  th:errors="*{rol}"></span>
+        </div>
+
+        <button type="submit" class="btn-primary">
+            <span th:if="${usuario.id == null}">✔ Registrar Usuario</span>
+            <span th:if="${usuario.id != null}">✔ Guardar Cambios</span>
+        </button>
+
+    </form>
+
+    <a class="btn-secondary" th:href="@{/usuarios}">← Volver al listado</a>
+   
+
+</div>
+
+</body>
+</html>

@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8"/>
+    <title>Gestión de Usuarios</title>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #f0f2f5;
+            padding: 2rem;
+            color: #2d3748;
+        }
+        .container { max-width: 1100px; margin: 0 auto; }
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+        h2 { font-size: 1.7rem; color: #1a202c; }
+        .btn-new {
+            background: #3182ce;
+            color: white;
+            padding: 0.6rem 1.3rem;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+        .btn-new:hover { background: #2b6cb0; }
+        .alert {
+            padding: 0.8rem 1rem;
+            border-radius: 8px;
+            margin-bottom: 1.5rem;
+            font-size: 0.9rem;
+        }
+        .alert-success { background: #f0fff4; color: #276749; border: 1px solid #9ae6b4; }
+        .card {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 4px 24px rgba(0,0,0,0.08);
+            overflow: hidden;
+        }
+        table { width: 100%; border-collapse: collapse; }
+        thead { background: #2d3748; color: white; }
+        thead th {
+            padding: 1rem 1.2rem;
+            text-align: left;
+            font-size: 0.85rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+        tbody tr { border-bottom: 1px solid #e2e8f0; }
+        tbody tr:hover { background: #f7fafc; }
+        tbody td { padding: 0.9rem 1.2rem; font-size: 0.92rem; }
+        .badge {
+            display: inline-block;
+            padding: 3px 10px;
+            border-radius: 99px;
+            font-size: 0.78rem;
+            font-weight: 700;
+        }
+        .badge-admin    { background: #ebf8ff; color: #2b6cb0; }
+        .badge-tecnico  { background: #f0fff4; color: #276749; }
+        .badge-activo   { background: #f0fff4; color: #276749; }
+        .badge-inactivo { background: #fff5f5; color: #c53030; }
+        .actions { display: flex; gap: 0.5rem; align-items: center; }
+        .btn-edit {
+            padding: 4px 12px;
+            background: #edf2f7;
+            color: #4a5568;
+            border-radius: 6px;
+            text-decoration: none;
+            font-size: 0.82rem;
+            font-weight: 600;
+        }
+        .btn-edit:hover { background: #e2e8f0; }
+        .btn-delete {
+            padding: 4px 12px;
+            background: #fff5f5;
+            color: #c53030;
+            border-radius: 6px;
+            border: none;
+            font-size: 0.82rem;
+            font-weight: 600;
+            cursor: pointer;
+        }
+        .btn-delete:hover { background: #fed7d7; }
+        .empty { text-align: center; color: #a0aec0; padding: 3rem; }
+    </style>
+</head>
+<body>
+<div class="container">
+
+    <div class="header">
+        <h2>👥 Gestión de Usuarios</h2>
+        <a th:href="@{/usuarios/nuevo}" class="btn-new">+ Nuevo Usuario</a>
+    </div>
+
+    <div class="alert alert-success" th:if="${exito}" th:text="${exito}"></div>
+
+    <div class="card">
+        <table>
+            <thead>
+                <tr>
+                    <th>#</th>
+                    <th>Nombre completo</th>
+                    <th>Username</th>
+                    <th>Email</th>
+                    <th>Rol</th>
+                    <th>Estado</th>
+                    <th>Registro</th>
+                    <th>Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr th:if="${#lists.isEmpty(usuarios)}">
+                    <td colspan="8" class="empty">No hay usuarios registrados.</td>
+                </tr>
+                <tr th:each="u : ${usuarios}" th:if="${u != null}">
+                    <td th:text="${u.id}"></td>
+                    <td th:text="${u.nombre + ' ' + u.apellido}"></td>
+                    <td th:text="${u.username}"></td>
+                    <td th:text="${u.email}"></td>
+                    <td>
+                        <span class="badge"
+                              th:classappend="${u.rol != null and u.rol.nombre == 'ROLE_ADMINISTRADOR'} ? 'badge-admin' : 'badge-tecnico'"
+                              th:text="${u.rol != null} ? ${u.rol.nombre} : 'Sin rol'">
+                        </span>
+                    </td>
+                    <td>
+                        <span class="badge"
+                              th:classappend="${u.activo} ? 'badge-activo' : 'badge-inactivo'"
+                              th:text="${u.activo} ? 'Activo' : 'Inactivo'">
+                        </span>
+                    </td>
+                    <td th:text="${u.fechaRegistro != null} ? ${#temporals.format(u.fechaRegistro, 'dd/MM/yyyy')} : '-'"></td>
+                    <td>
+                        <div class="actions">
+                            <a th:href="@{/usuarios/editar/{id}(id=${u.id})}" class="btn-edit">Editar</a>
+                            <form th:action="@{/usuarios/desactivar/{id}(id=${u.id})}"
+                                  method="post"
+                                  onsubmit="return confirm('¿Desactivar este usuario?')">
+                                <button type="submit" class="btn-delete"
+                                        th:if="${u.activo}">Desactivar</button>
+                            </form>
+                        </div>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+</div>
+</body>
+</html>
