@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>MaqGuard - Inventario</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
+    <link rel="stylesheet" th:href="@{/css/maquinas.css}">
+</head>
+<body class="bg-light">
+
+<div class="container-fluid py-5 min-vh-100">
+    <div class="container">
+
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <div>
+                <h2 class="fw-bold text-dark mb-1">Inventario de Maquinaria</h2>
+                <p class="text-muted mb-0">Gestión operativa del parque de máquinas.</p>
+            </div>
+            <div>
+                <a th:href="@{/maquinas/crear}" class="btn btn-primary rounded-pill px-4 shadow-sm fw-bold">
+                    <i class="bi bi-plus-lg me-2"></i>Nueva Máquina
+                </a>
+            </div>
+        </div>
+
+        <div class="card shadow border-0 rounded-4 overflow-visible">
+            <div class="card-header bg-white py-3 px-4 border-bottom">
+                <div class="row g-3 align-items-center">
+                    <div class="col-lg-4">
+                        <div class="input-group">
+                            <span class="input-group-text bg-light border-end-0 text-muted ps-3"><i class="bi bi-search"></i></span>
+                            <input type="text" id="buscador" class="form-control bg-light border-start-0" placeholder="Buscar máquina, modelo...">
+                        </div>
+                    </div>
+
+                    <div class="col-lg-8">
+                        <div class="d-flex gap-2 justify-content-lg-end flex-wrap">
+                            <select id="filtroEstado" class="form-select form-select-sm rounded-pill" style="max-width: 140px;">
+                                <option value="">Estado: Todos</option>
+                                <option value="Activo">Activos</option>
+                                <option value="Inactivo">Inactivos</option>
+                            </select>
+
+                            <select id="filtroUbicacion" class="form-select form-select-sm rounded-pill" style="max-width: 160px;">
+                                <option value="">Ubicación: Todas</option>
+                                <option th:each="ubi : ${ubicaciones}" th:value="${ubi}" th:text="${ubi}"></option>
+                            </select>
+
+                            <a th:href="@{/maquinas/exportarExcel}" class="btn btn-outline-success btn-sm rounded-pill px-3 d-flex align-items-center">
+                                <i class="bi bi-file-earmark-excel me-2"></i>Excel
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card-body p-0">
+                <div th:if="${#lists.isEmpty(maquinas)}" class="text-center py-5">
+                    <div class="mb-3 opacity-25">
+                        <i class="bi bi-gear-wide-connected text-secondary" style="font-size: 4rem;"></i>
+                    </div>
+                    <h5 class="fw-bold text-secondary">No hay máquinas registradas</h5>
+                </div>
+
+                <div th:unless="${#lists.isEmpty(maquinas)}" class="table-responsive">
+                    <table class="table align-middle mb-0 table-hover" id="tablaMaquinas">
+                        <thead class="bg-light text-secondary small text-uppercase font-monospace">
+                            <tr>
+                                <th class="ps-4 py-3" style="width: 30%;">Máquina / Modelo</th>
+                                <th class="py-3" style="width: 15%;">Ubicación</th>
+                                <th class="py-3" style="width: 20%;">Mantenimiento</th>
+                                <th class="py-3 text-center" style="width: 15%;">Estado</th>
+                                <th class="text-end pe-4 py-3" style="width: 20%;">Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr th:each="maq : ${maquinas}" class="fila-tabla d-table-row">
+                                <td class="ps-4 py-3">
+                                    <div class="d-flex align-items-center">
+                                        <div class="machine-icon-box me-3 shadow-sm">
+                                            <i class="bi bi-gear-fill"></i>
+                                        </div>
+                                        <div>
+                                            <h6 class="mb-0 fw-bold text-dark text-wrap" th:text="${maq.nombre}"></h6>
+                                            <small class="text-muted d-block mt-1" th:text="'Mod: ' + ${maq.modelo}"></small>
+                                        </div>
+                                    </div>
+                                    <span class="d-none" th:text="${maq.id_maquina} + ' ' + ${maq.nombre} + ' ' + ${maq.modelo}"></span>
+                                </td>
+
+                                <td>
+                                    <div class="d-flex align-items-center text-secondary">
+                                        <i class="bi bi-geo-alt me-2 text-danger opacity-50"></i>
+                                        <span class="ubicacion-texto" th:text="${maq.ubicacion}"></span>
+                                    </div>
+                                </td>
+
+                                <td>
+                                    <div th:if="${maq.fechaProximoMantenimiento != null}" class="d-flex flex-column">
+                                        <span th:with="dias=${T(java.time.temporal.ChronoUnit).DAYS.between(T(java.time.LocalDate).now(), maq.fechaProximoMantenimiento)}"
+                                              th:class="'badge rounded-pill mb-1 w-auto align-self-start ' + 
+                                                        ${dias <= 0 ? 'bg-danger border-danger' : 
+                                                        (dias <= 5 ? 'bg-warning text-dark border-warning' : 'bg-success border-success')} + 
+                                                        ' bg-opacity-10 border text-emphasis'"
+                                              th:text="'Próx: ' + ${#temporals.format(maq.fechaProximoMantenimiento, 'dd/MM/yyyy')}">
+                                        </span>
+                                        <small class="text-muted" style="font-size: 0.75rem;" th:text="'Intervalo: ' + ${maq.intervaloMantenimiento} + ' días'"></small>
+                                    </div>
+                                    <span th:if="${maq.fechaProximoMantenimiento == null}" class="text-muted fst-italic small">No programado</span>
+                                </td>
+
+                                <td class="text-center">
+                                    <span th:class="'badge bg-opacity-10 px-3 py-2 rounded-pill estado-badge border ' + 
+                                                  ${maq.estado == 'Activo' ? 'bg-success text-success border-success' : 'bg-secondary text-secondary border-secondary'}"
+                                          th:text="${maq.estado}"></span>
+                                </td>
+
+                                <td class="text-end pe-4">
+                                    <div class="dropdown">
+                                        <button class="btn btn-light btn-sm rounded-circle shadow-sm" type="button" data-bs-toggle="dropdown">
+                                            <i class="bi bi-three-dots-vertical text-secondary"></i>
+                                        </button>
+                                        <ul class="dropdown-menu dropdown-menu-end border-0 shadow">
+                                            <li><h6 class="dropdown-header">Gestionar</h6></li>
+                                            <li>
+                                                <a class="dropdown-item" th:href="@{/maquinas/editar/{id}(id=${maq.id_maquina})}">
+                                                    <i class="bi bi-pencil me-2 text-warning"></i> Editar
+                                                </a>
+                                            </li>
+                                            <li><hr class="dropdown-divider"></li>
+                                            <li>
+                                                <a class="dropdown-item text-danger" th:href="@{/maquinas/eliminar/{id}(id=${maq.id_maquina})}" 
+                                                   onclick="return confirm('¿Eliminar máquina permanentemente?');">
+                                                    <i class="bi bi-trash me-2"></i> Eliminar
+                                                </a>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div class="card-footer bg-white border-top-0 py-3 d-flex justify-content-center">
+                <nav><ul class="pagination pagination-sm mb-0" id="paginacionMaquinas"></ul></nav>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script th:src="@{/js/maquinas_logic.js}"></script> </body>
+</html>
