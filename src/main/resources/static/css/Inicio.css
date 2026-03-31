@@ -1,0 +1,529 @@
+/* 1. Fondo Hero Premium */
+.bg-gradient-hero {
+  /* Degradado más profundo y profesional */
+  background: radial-gradient(circle at 50% 0%, #f1f5f9 0%, #e2e8f0 100%);
+  padding-bottom: 4rem;
+  padding-top: 2rem;
+  overflow: hidden;
+  position: relative;
+}
+
+/* Decoración de fondo sutil */
+.hero-decor {
+  position: absolute;
+  width: 600px;
+  height: 600px;
+  background: radial-gradient(circle, rgba(13, 110, 253, 0.05) 0%, rgba(255, 255, 255, 0) 70%);
+  top: -200px;
+  left: 50%;
+  transform: translateX(-50%);
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* 2. ESCENARIO 3D (CARRUSEL) */
+.scene-3d {
+  position: relative;
+  width: 100%;
+  height: 500px;
+  /* Aumentado para acomodar paneles más grandes */
+  perspective: 1500px;
+  /* Perspectiva profunda */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-top: 3rem;
+  z-index: 2;
+}
+
+.carousel-ring {
+  width: 500px;
+  /* Más ancho */
+  height: 360px;
+  /* Más alto */
+  position: absolute;
+  transform-style: preserve-3d;
+  transition: transform 1s cubic-bezier(0.16, 1, 0.3, 1);
+  /* Movimiento ultra fluido */
+}
+
+/* PANELES DEL CARRUSEL (TARJETAS) */
+.carousel-panel {
+  position: absolute;
+  width: 500px;
+  /* Coincide con el anillo */
+  height: 360px;
+  left: 0;
+  top: 0;
+  background: #fff;
+  border-radius: 20px;
+  overflow: hidden;
+  /* Sombra realista y borde brillante */
+  box-shadow:
+    0 0 0 1px rgba(255, 255, 255, 0.8) inset,
+    0 20px 40px -10px rgba(0, 0, 0, 0.3);
+  backface-visibility: hidden;
+  display: flex;
+  flex-direction: column;
+  /* Borde fino */
+  border: 1px solid rgba(0, 0, 0, 0.05);
+}
+
+.carousel-panel img {
+  width: 100%;
+  height: 75%;
+  /* Más imagen, menos texto */
+  object-fit: cover;
+  transition: transform 0.5s;
+}
+
+/* Efecto zoom en la imagen del panel al pasar mouse */
+.carousel-panel:hover img {
+  transform: scale(1.05);
+}
+
+.panel-body {
+  padding: 15px 20px;
+  height: 25%;
+  background: rgba(255, 255, 255, 0.98);
+  text-align: left;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  border-top: 1px solid rgba(0, 0, 0, 0.05);
+}
+
+/* Botones de navegación del carrusel */
+.nav-btn {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  background: #fff;
+  border: 1px solid #eee;
+  color: #0d1b2a;
+  font-size: 1.5rem;
+  cursor: pointer;
+  z-index: 100;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+  transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.nav-btn:hover {
+  background: #0d6efd;
+  color: white;
+  transform: translateY(-50%) scale(1.15);
+  box-shadow: 0 15px 35px rgba(13, 110, 253, 0.4);
+}
+
+.prev-btn {
+  left: 5%;
+}
+
+.next-btn {
+  right: 5%;
+}
+
+/* 3. IMAGEN PRINCIPAL INTERACTIVA */
+.hero-main-img {
+  max-height: 420px;
+  /* Más grande */
+  width: auto;
+  display: block;
+  margin: 0 auto;
+  transition: all 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
+  /* Efecto rebote suave */
+  filter: drop-shadow(0 15px 30px rgba(0, 0, 0, 0.15));
+  cursor: pointer;
+}
+
+.hero-main-img:hover {
+  transform: translateY(-15px) scale(1.05) rotate(2deg);
+  /* Levita, crece y rota */
+  filter: drop-shadow(0 30px 50px rgba(13, 110, 253, 0.25));
+}
+
+/* 4. Estilos de Texto y Cards Informativas */
+.text-gradient {
+  background: linear-gradient(90deg, #0d1b2a 0%, #0d6efd 100%);
+  background-clip: text;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.feature-card {
+  background: #fff;
+  padding: 2.5rem;
+  border-radius: 24px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.04);
+  transition: all 0.3s ease;
+  border: 1px solid rgba(0, 0, 0, 0.03);
+  height: 100%;
+}
+
+.feature-card:hover {
+  transform: translateY(-10px);
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.08);
+  border-color: rgba(13, 110, 253, 0.3);
+}
+
+.icon-circle-lg {
+  width: 90px;
+  height: 90px;
+  background: #f8f9fa;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 1.5rem;
+  transition: all 0.4s ease;
+}
+
+.feature-card:hover .icon-circle-lg {
+  background: #e0f2fe;
+  /* Azul muy claro al hover */
+  transform: scale(1.1) rotate(-10deg);
+}
+
+/* Responsividad Carrusel 3D */
+@media (max-width: 992px) {
+  .carousel-ring {
+    width: 400px;
+    height: 300px;
+  }
+
+  .carousel-panel {
+    width: 400px;
+    height: 300px;
+  }
+
+  .scene-3d {
+    height: 400px;
+  }
+}
+
+@media (max-width: 576px) {
+  .carousel-ring {
+    width: 300px;
+    height: 220px;
+  }
+
+  .carousel-panel {
+    width: 300px;
+    height: 220px;
+  }
+
+  .scene-3d {
+    height: 300px;
+  }
+
+  .nav-btn {
+    width: 40px;
+    height: 40px;
+    font-size: 1rem;
+  }
+
+  .nav-link {
+    position: relative;
+    font-weight: 500;
+    color: rgba(255, 255, 255, 0.7) !important;
+    transition: all 0.3s ease;
+  }
+
+  .nav-link:hover,
+  .nav-link.active {
+    color: #fff !important;
+    transform: translateY(-1px);
+  }
+
+  .nav-link::after {
+    content: '';
+    position: absolute;
+    width: 0;
+    height: 2px;
+    bottom: 0;
+    left: 50%;
+    background-color: #0d6efd;
+    transition: all 0.3s ease;
+    transform: translateX(-50%);
+  }
+
+  .nav-link:hover::after,
+  .nav-link.active::after {
+    width: 80%;
+  }
+
+  .btn-login-nav {
+    background-color: #0d6efd;
+    color: white !important;
+    border: none;
+    padding: 0.5rem 1.5rem;
+    transition: all 0.3s ease;
+  }
+
+  .btn-login-nav:hover {
+    background-color: #0b5ed7;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 10px rgba(13, 110, 253, 0.3);
+  }
+
+  .nav-item .btn-login-nav::after {
+    display: none;
+  }
+
+  /* Efecto Hover en Enlaces */
+  .nav-link {
+    position: relative;
+    font-weight: 500;
+    color: rgba(255, 255, 255, 0.7) !important;
+    transition: all 0.3s ease;
+  }
+
+  .nav-link:hover,
+  .nav-link.active {
+    color: #fff !important;
+    transform: translateY(-1px);
+  }
+
+  /* Línea animada debajo del link activo/hover */
+  .nav-link::after {
+    content: '';
+    position: absolute;
+    width: 0;
+    height: 2px;
+    bottom: 0;
+    left: 50%;
+    background-color: #0d6efd;
+    /* Azul Primario */
+    transition: all 0.3s ease;
+    transform: translateX(-50%);
+  }
+
+  .nav-link:hover::after,
+  .nav-link.active::after {
+    width: 80%;
+  }
+
+  /* Botón de Login destacado */
+  .btn-login-nav {
+    background-color: #0d6efd;
+    color: white !important;
+    border: none;
+    padding: 0.5rem 1.5rem;
+    transition: all 0.3s ease;
+  }
+
+  .btn-login-nav:hover {
+    background-color: #0b5ed7;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 10px rgba(13, 110, 253, 0.3);
+  }
+
+  /* Ajuste para que el botón no tenga la línea de abajo */
+  .nav-item .btn-login-nav::after {
+    display: none;
+  }
+
+  /* Fondo Hero Premium */
+  .bg-gradient-hero {
+    background: radial-gradient(circle at 50% 0%, #f1f5f9 0%, #e2e8f0 100%);
+    padding-bottom: 4rem;
+    padding-top: 2rem;
+    overflow: hidden;
+    position: relative;
+  }
+
+  .hero-decor {
+    position: absolute;
+    width: 600px;
+    height: 600px;
+    background: radial-gradient(circle, rgba(13, 110, 253, 0.05) 0%, rgba(255, 255, 255, 0) 70%);
+    top: -200px;
+    left: 50%;
+    transform: translateX(-50%);
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  /* Escenario 3D */
+  .scene-3d {
+    position: relative;
+    width: 100%;
+    height: 500px;
+    perspective: 1500px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-top: 3rem;
+    z-index: 2;
+  }
+
+  .carousel-ring {
+    width: 500px;
+    height: 360px;
+    position: absolute;
+    transform-style: preserve-3d;
+    transition: transform 1s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+
+  .carousel-panel {
+    position: absolute;
+    width: 500px;
+    height: 360px;
+    left: 0;
+    top: 0;
+    background: #fff;
+    border-radius: 20px;
+    overflow: hidden;
+    box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.8) inset, 0 20px 40px -10px rgba(0, 0, 0, 0.3);
+    backface-visibility: hidden;
+    display: flex;
+    flex-direction: column;
+    border: 1px solid rgba(0, 0, 0, 0.05);
+  }
+
+  .carousel-panel img {
+    width: 100%;
+    height: 75%;
+    object-fit: cover;
+    transition: transform 0.5s;
+  }
+
+  .carousel-panel:hover img {
+    transform: scale(1.05);
+  }
+
+  .panel-body {
+    padding: 15px 20px;
+    height: 25%;
+    background: rgba(255, 255, 255, 0.98);
+    text-align: left;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    border-top: 1px solid rgba(0, 0, 0, 0.05);
+  }
+
+  /* Botones de navegación */
+  .nav-btn {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    background: #fff;
+    border: 1px solid #eee;
+    color: #0d1b2a;
+    font-size: 1.5rem;
+    cursor: pointer;
+    z-index: 100;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+    transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .nav-btn:hover {
+    background: #0d6efd;
+    color: white;
+    transform: translateY(-50%) scale(1.15);
+    box-shadow: 0 15px 35px rgba(13, 110, 253, 0.4);
+  }
+
+  .prev-btn {
+    left: 5%;
+  }
+
+  .next-btn {
+    right: 5%;
+  }
+
+  .hero-main-img {
+    max-height: 420px;
+    width: auto;
+    display: block;
+    margin: 0 auto;
+    transition: all 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
+    filter: drop-shadow(0 15px 30px rgba(0, 0, 0, 0.15));
+    cursor: pointer;
+  }
+
+  .hero-main-img:hover {
+    transform: translateY(-15px) scale(1.05) rotate(2deg);
+    filter: drop-shadow(0 30px 50px rgba(13, 110, 253, 0.25));
+  }
+
+  .text-gradient {
+    background: linear-gradient(90deg, #0d1b2a 0%, #0d6efd 100%);
+    background-clip: text;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+
+  .feature-card {
+    background: #fff;
+    padding: 2.5rem;
+    border-radius: 24px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.04);
+    transition: all 0.3s ease;
+    border: 1px solid rgba(0, 0, 0, 0.03);
+    height: 100%;
+  }
+
+  .feature-card:hover {
+    transform: translateY(-10px);
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.08);
+    border-color: rgba(13, 110, 253, 0.3);
+  }
+
+  .icon-circle-lg {
+    width: 90px;
+    height: 90px;
+    background: #f8f9fa;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 1.5rem;
+    transition: all 0.4s ease;
+  }
+
+  @media (max-width: 992px) {
+
+    .carousel-ring,
+    .carousel-panel {
+      width: 400px;
+      height: 300px;
+    }
+
+    .scene-3d {
+      height: 400px;
+    }
+  }
+
+  @media (max-width: 576px) {
+
+    .carousel-ring,
+    .carousel-panel {
+      width: 300px;
+      height: 220px;
+    }
+
+    .scene-3d {
+      height: 300px;
+    }
+
+    .nav-btn {
+      width: 40px;
+      height: 40px;
+      font-size: 1rem;
+    }
+  }
+}
