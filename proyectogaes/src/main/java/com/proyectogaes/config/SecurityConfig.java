@@ -16,7 +16,7 @@ public class SecurityConfig {
                 .requestMatchers("/", "/login", "/css/**", "/js/**", "/assets/**").permitAll()
                 
                 // Restricciones por Rol
-                .requestMatchers("/admin/**").hasRole("ADMIN")
+                .requestMatchers("/admin/**").hasRole("ADMINISTRADOR")
                 .requestMatchers("/tecnico/**").hasRole("TECNICO")
                 
                 // El dashboard principal requiere estar autenticado
