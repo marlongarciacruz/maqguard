@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>MaqGuard - Editar Máquina</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
+</head>
+<body class="bg-light">
+
+<div class="container my-5">
+
+    <nav aria-label="breadcrumb" class="mb-4">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a th:href="@{/maquinas}" class="text-decoration-none text-secondary">Inventario</a></li>
+            <li class="breadcrumb-item active" aria-current="page">Editar Máquina #[[${maquina.id_maquina}]]</li>
+        </ol>
+    </nav>
+
+    <div class="row justify-content-center">
+        <div class="col-lg-10">
+            <div class="card shadow-lg border-0 rounded-4 overflow-hidden">
+                
+                <div class="card-header bg-white py-4 px-5 border-bottom d-flex justify-content-between align-items-center">
+                    <div class="d-flex align-items-center">
+                        <div class="bg-warning bg-opacity-10 text-warning p-3 rounded-circle me-3">
+                            <i class="bi bi-pencil-square fs-4"></i>
+                        </div>
+                        <div>
+                            <h4 class="fw-bold text-dark mb-0">Editar Máquina</h4>
+                            <p class="text-muted small mb-0">Actualice la información técnica y operativa.</p>
+                        </div>
+                    </div>
+                    <div class="text-end">
+                        <small class="text-muted text-uppercase fw-bold" style="font-size: 0.65rem;">ID Sistema</small>
+                        <div class="font-monospace fw-bold fs-5 text-dark" th:text="'#' + ${maquina.id_maquina}"></div>
+                    </div>
+                </div>
+
+                <div class="card-body p-5 bg-light">
+                    <form th:action="@{/maquinas/guardar}" th:object="${maquina}" method="post" class="needs-validation" novalidate>
+                        
+                        <input type="hidden" th:field="*{id_maquina}">
+
+                        <div class="card border-0 shadow-sm rounded-4 mb-4">
+                            <div class="card-body p-4">
+                                <h6 class="fw-bold text-secondary mb-3 border-bottom pb-2">1. Identificación del Activo</h6>
+                                <div class="row g-4">
+                                    <div class="col-md-8">
+                                        <label class="form-label fw-semibold text-dark">Nombre de la Máquina</label>
+                                        <div class="input-group">
+                                            <span class="input-group-text bg-white border-end-0 text-muted"><i class="bi bi-tag-fill"></i></span>
+                                            <input type="text" th:field="*{nombre}" required class="form-control form-control-lg border-start-0 shadow-none">
+                                            <div class="invalid-feedback">El nombre es obligatorio.</div>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-md-4">
+                                        <label class="form-label fw-semibold text-dark">Modelo</label>
+                                        <div class="input-group">
+                                            <span class="input-group-text bg-white border-end-0 text-muted"><i class="bi bi-qr-code"></i></span>
+                                            <input type="text" th:field="*{modelo}" required class="form-control form-control-lg border-start-0 shadow-none">
+                                        </div>
+                                    </div>
+
+                                    <div class="col-12">
+                                        <label class="form-label fw-semibold text-dark">Ubicación Física</label>
+                                        <div class="input-group">
+                                            <span class="input-group-text bg-white border-end-0 text-muted"><i class="bi bi-geo-alt-fill"></i></span>
+                                            <input type="text" th:field="*{ubicacion}" required class="form-control border-start-0 shadow-none">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="card border-0 shadow-sm rounded-4 mb-4">
+                            <div class="card-body p-4">
+                                <h6 class="fw-bold text-secondary mb-3 border-bottom pb-2">2. Configuración Operativa</h6>
+                                <div class="row g-4">
+                                    <div class="col-md-4">
+                                        <label class="form-label fw-semibold text-dark">Estado Actual</label>
+                                        <div class="input-group">
+                                            <span class="input-group-text bg-white border-end-0 text-muted"><i class="bi bi-toggle-on"></i></span>
+                                            <select th:field="*{estado}" required class="form-select border-start-0 shadow-none">
+                                                <option value="Activo">Activo</option>
+                                                <option value="Inactivo">Inactivo</option>
+                                                <option value="En mantenimiento">En mantenimiento</option>
+                                            </select>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-md-4">
+                                        <label class="form-label fw-semibold text-dark">Último Mantenimiento</label>
+                                        <div class="input-group">
+                                            <span class="input-group-text bg-white border-end-0 text-muted"><i class="bi bi-calendar-check"></i></span>
+                                            <input type="date" th:field="*{fechaUltimoMantenimiento}" required class="form-control border-start-0 shadow-none">
+                                        </div>
+                                    </div>
+
+                                    <div class="col-md-4">
+                                        <label class="form-label fw-semibold text-dark">Intervalo (Días)</label>
+                                        <div class="input-group">
+                                            <span class="input-group-text bg-white border-end-0 text-muted"><i class="bi bi-arrow-repeat"></i></span>
+                                            <input type="number" th:field="*{intervaloMantenimiento}" required class="form-control border-start-0 shadow-none">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="d-flex justify-content-end align-items-center gap-3 pt-2">
+                            <a th:href="@{/maquinas}" class="btn btn-link text-decoration-none text-secondary">Cancelar cambios</a>
+                            <button type="submit" class="btn btn-primary px-5 rounded-pill shadow-sm fw-bold">
+                                <i class="bi bi-save-fill me-2"></i>Guardar Actualización
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    (() => {
+        'use strict'
+        const forms = document.querySelectorAll('.needs-validation')
+        Array.from(forms).forEach(form => {
+            form.addEventListener('submit', event => {
+                if (!form.checkValidity()) {
+                    event.preventDefault()
+                    event.stopPropagation()
+                }
+                form.classList.add('was-validated')
+            }, false)
+        })
+    })()
+</script>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
