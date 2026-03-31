@@ -26,57 +26,43 @@ public class AdminInventarioController {
         this.service = service;
     }
 
+    // Método para evitar repetir código de la barra de navegación en cada
+    // @GetMapping
+    @ModelAttribute
+    public void addAttributes(Model model) {
+        model.addAttribute("totalNotificaciones", 0); // O service.contarNotificaciones()
+        model.addAttribute("ultimasNotificaciones", List.of());
+    }
 
     @GetMapping
     public String listarInventario(Model model) {
-        model.addAttribute("listaInventario", service.listar());
-        return "inventario/lista";
+        // Debe coincidir con ${inventario} en el HTML
+        model.addAttribute("inventario", service.listar());
+        return "inventario/lista"; // Nombre de tu archivo HTML
     }
-
 
     @GetMapping("/nuevo")
     public String mostrarFormularioCrear(Model model) {
         model.addAttribute("inventario", new Inventario());
-        model.addAttribute("modo", "nuevo");
-        return "inventario/form";
+        return "inventario/crear"; // Asegúrate que el archivo se llame crear.html
     }
 
- 
     @PostMapping("/guardar")
     public String guardarInventario(@ModelAttribute("inventario") Inventario inventario) {
-
-        // IMPORTANTE: aseguramos que sea nuevo
-        inventario.setId_repuesto(null);
-
+        // Si el ID es null o 0, Spring Data lo tratará como nuevo
         service.guardar(inventario);
         return "redirect:/inventario";
     }
 
-  
     @GetMapping("/editar/{id}")
     public String mostrarFormularioEditar(@PathVariable Long id, Model model) {
-
         Inventario inventario = service.obtener(id);
-
         if (inventario == null) {
             return "redirect:/inventario";
         }
-
         model.addAttribute("inventario", inventario);
-        model.addAttribute("modo", "editar");
-        return "inventario/form";
+        return "inventario/crear"; // Reutilizamos la misma vista para crear/editar
     }
-
-  
-    @PostMapping("/actualizar")
-    public String actualizarInventario(@ModelAttribute("inventario") Inventario inventario) {
-
-        // Aquí SI debe venir el id desde el form
-        service.guardar(inventario);
-
-        return "redirect:/inventario";
-    }
-
 
     @GetMapping("/eliminar/{id}")
     public String eliminarInventario(@PathVariable Long id) {
