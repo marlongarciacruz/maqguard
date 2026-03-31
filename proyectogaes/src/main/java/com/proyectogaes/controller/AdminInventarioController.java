@@ -28,39 +28,52 @@ public class AdminInventarioController {
 
 
     @GetMapping
-    public String verInventario(Model model) {
-        model.addAttribute("inventario", service.listar());
-        return "inventario/lista"; // templates/inventario/lista.html
+    public String listarInventario(Model model) {
+        model.addAttribute("listaInventario", service.listar());
+        return "inventario/lista";
     }
 
 
     @GetMapping("/nuevo")
     public String mostrarFormularioCrear(Model model) {
         model.addAttribute("inventario", new Inventario());
-        return "inventario/crear";
+        model.addAttribute("modo", "nuevo");
+        return "inventario/form";
     }
 
-
+ 
     @PostMapping("/guardar")
-    public String guardarInventario(@ModelAttribute Inventario inventario) {
+    public String guardarInventario(@ModelAttribute("inventario") Inventario inventario) {
+
+        // IMPORTANTE: aseguramos que sea nuevo
+        inventario.setId_repuesto(null);
+
         service.guardar(inventario);
         return "redirect:/inventario";
     }
 
-
+  
     @GetMapping("/editar/{id}")
     public String mostrarFormularioEditar(@PathVariable Long id, Model model) {
-        Inventario inv = service.obtener(id);
-        model.addAttribute("inventario", inv);
-        return "inventario/editar";
+
+        Inventario inventario = service.obtener(id);
+
+        if (inventario == null) {
+            return "redirect:/inventario";
+        }
+
+        model.addAttribute("inventario", inventario);
+        model.addAttribute("modo", "editar");
+        return "inventario/form";
     }
 
+  
+    @PostMapping("/actualizar")
+    public String actualizarInventario(@ModelAttribute("inventario") Inventario inventario) {
 
-    @PostMapping("/actualizar/{id}")
-    public String actualizarInventario(@PathVariable Long id,
-            @ModelAttribute Inventario inventario) {
-        inventario.setId_repuesto(id);
+        // Aquí SI debe venir el id desde el form
         service.guardar(inventario);
+
         return "redirect:/inventario";
     }
 
@@ -71,7 +84,6 @@ public class AdminInventarioController {
         return "redirect:/inventario";
     }
 
- 
     @GetMapping("/exportar")
     public void exportarExcel(HttpServletResponse response) throws IOException {
 
