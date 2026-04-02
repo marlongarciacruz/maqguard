@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>Iniciar Mantenimiento - MaqGuard</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"/>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css"/>
+</head>
+<body>
+
+<!--
+╔══════════════════════════════════════════════════════════════╗
+║  EQUIVALENTE A: Views/mismantenimientos/iniciar.php          ║
+║  CONTROLLER:    GET  /tecnico/mismantenimientos/{id}/iniciar ║
+║                 POST /tecnico/mismantenimientos/{id}/finalizar║
+║  DATOS:         mantenimiento, maquinaInfo, repuestos        ║
+╚══════════════════════════════════════════════════════════════╝
+-->
+
+<div class="container my-5">
+    <div class="card shadow-lg border-0 rounded-4">
+
+        <div class="card-header bg-success text-white py-3 rounded-top-4 d-flex justify-content-between align-items-center">
+            <h4 class="mb-0">
+                <i class="bi bi-play-circle-fill me-2"></i>Ejecución de Mantenimiento Asignado
+            </h4>
+        </div>
+
+        <div class="card-body bg-light p-4">
+
+            <!-- PHP: Máquina: <?= esc($mantenimiento['nombre_maquina']); ?> (Modelo: <?= esc($mantenimiento['modelo']); ?>) -->
+            <h5 class="card-title text-success mb-4 border-bottom pb-2">
+                Máquina: <span th:text="${mantenimiento.nombreMaquina}">Nombre</span>
+                (Modelo: <span th:text="${mantenimiento.modeloMaquina}">Modelo</span>)
+            </h5>
+
+            <!--
+                PHP: action="<?= base_url('mismantenimientos/terminar/' . $mantenimiento['id_mantenimiento']); ?>"
+                Java: POST /tecnico/mismantenimientos/{id}/finalizar
+            -->
+            <form th:action="@{/tecnico/mismantenimientos/{id}/finalizar(id=${mantenimiento.idMantenimiento})}"
+                  method="post">
+
+                <!-- Token CSRF de Spring Security (equivale al csrf_field() de CodeIgniter) -->
+                <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
+
+                <h6 class="card-title text-primary mb-3 mt-4">Detalle del Trabajo Realizado</h6>
+
+                <!-- PHP: textarea name="descripcion_trabajo" -->
+                <div class="mb-4">
+                    <label for="descripcion_trabajo" class="form-label fw-semibold">
+                        Descripción Detallada <span class="text-danger">*</span>
+                    </label>
+                    <textarea class="form-control rounded-3 shadow-sm"
+                              id="descripcion_trabajo"
+                              name="descripcion_trabajo"
+                              rows="6" required
+                              placeholder="Escriba los pasos, ajustes, componentes reemplazados, y el estado final de la máquina."></textarea>
+                    <div class="form-text">Este campo se registrará como el detalle del mantenimiento ejecutado.</div>
+                </div>
+
+                <h6 class="card-title text-primary mb-3 mt-4 border-bottom pb-2">
+                    Actualización del Ciclo (Para la Máquina)
+                </h6>
+
+                <div class="row mb-4">
+                    <!-- PHP: input name="fecha_ultimo_mantenimiento" value="<?= date('Y-m-d'); ?>" -->
+                    <div class="col-md-6">
+                        <label for="fecha_ultimo_mantenimiento" class="form-label fw-semibold">
+                            Nueva Fecha de Último Mantenimiento <span class="text-danger">*</span>
+                        </label>
+                        <input type="date"
+                               class="form-control rounded-3 shadow-sm"
+                               id="fecha_ultimo_mantenimiento"
+                               name="fecha_ultimo_mantenimiento"
+                               th:value="${#dates.format(#dates.createNow(), 'yyyy-MM-dd')}"
+                               th:max="${#dates.format(#dates.createNow(), 'yyyy-MM-dd')}"
+                               required/>
+                        <div class="form-text">Esta fecha se actualizará en la ficha de la máquina.</div>
+                    </div>
+
+                    <!-- PHP: input name="intervalo_mantenimiento" value="<?= esc($maquina_info['intervalo_mantenimiento']); ?>" -->
+                    <div class="col-md-6">
+                        <label for="intervalo_mantenimiento" class="form-label fw-semibold">
+                            Nuevo Intervalo de Mantenimiento (Días)
+                        </label>
+                        <input type="number"
+                               class="form-control rounded-3 shadow-sm"
+                               id="intervalo_mantenimiento"
+                               name="intervalo_mantenimiento"
+                               th:value="${maquinaInfo.intervaloMantenimiento}"
+                               min="1" required/>
+                        <div class="form-text">
+                            Valor actual:
+                            <span th:text="${maquinaInfo.intervaloMantenimiento}">30</span> días.
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Botón para abrir modal de repuestos -->
+                <button type="button" class="btn btn-primary"
+                        data-bs-toggle="modal" data-bs-target="#modalRepuestos">
+                    Seleccionar Repuestos Usados
+                </button>
+
+                <!-- ── MODAL DE REPUESTOS ── equivale al modal PHP -->
+                <div class="modal fade" id="modalRepuestos" tabindex="-1" aria-hidden="true">
+                    <div class="modal-dialog modal-lg modal-dialog-scrollable">
+                        <div class="modal-content shadow-lg border-0 rounded-4">
+
+                            <div class="modal-header bg-primary text-white rounded-top-4">
+                                <h5 class="modal-title fw-bold">Repuestos Usados</h5>
+                                <button type="button" class="btn-close btn-close-white"
+                                        data-bs-dismiss="modal"></button>
+                            </div>
+
+                            <div class="modal-body">
+                                <input type="text" id="buscadorRepuestos"
+                                       class="form-control mb-3 rounded-pill px-3"
+                                       placeholder="🔍 Buscar repuesto..."/>
+
+                                <table class="table table-hover align-middle text-center">
+                                    <thead class="table-primary">
+                                        <tr>
+                                            <th>Seleccionar</th>
+                                            <th>Repuesto</th>
+                                            <th>Disponible</th>
+                                            <th>Cantidad usada</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="tablaRepuestos">
+                                        <!--
+                                            PHP: foreach ($repuestos as $r)
+                                            Java: th:each="r : ${repuestos}"
+                                        -->
+                                        <tr th:each="r : ${repuestos}">
+                                            <td>
+                                                <input type="checkbox"
+                                                       class="form-check-input seleccionar-repuesto"
+                                                       th:data-id="${r.idRepuesto}"/>
+                                            </td>
+                                            <!-- PHP: esc($r['nombre']) -->
+                                            <td class="fw-semibold" th:text="${r.nombre}">Repuesto</td>
+                                            <!-- PHP: esc($r['cantidad']) -->
+                                            <td th:text="${r.cantidad}">0</td>
+                                            <td>
+                                                <!--
+                                                    PHP: name="repuestos[<?= $r['id_repuesto']; ?>]"
+                                                    En Java se recibe como Map<Long, Integer> repuestos
+                                                -->
+                                                <input type="number"
+                                                       th:name="'repuestos[' + ${r.idRepuesto} + ']'"
+                                                       class="form-control text-center cantidad-input"
+                                                       value="0" min="0"
+                                                       th:max="${r.cantidad}"
+                                                       disabled/>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+
+                            <div class="modal-footer d-flex justify-content-between">
+                                <span class="text-muted">Seleccione los repuestos que utilizó</span>
+                                <button type="button" class="btn btn-success rounded-pill px-4"
+                                        data-bs-dismiss="modal">
+                                    Guardar selección
+                                </button>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Botón enviar formulario -->
+                <div class="d-grid gap-2">
+                    <button type="submit"
+                            class="btn btn-success btn-lg rounded-pill shadow-lg mt-3"
+                            onclick="return confirm('¿Confirma que desea finalizar esta tarea? Se actualizarán los registros y se notificará al Administrador.');">
+                        <i class="bi bi-check-circle-fill me-2"></i> Terminar Mantenimiento
+                    </button>
+                </div>
+
+            </form>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+    // Buscador de repuestos — igual al script del PHP
+    document.getElementById("buscadorRepuestos").addEventListener("keyup", function () {
+        let filtro = this.value.toLowerCase();
+        document.querySelectorAll("#tablaRepuestos tr").forEach(fila => {
+            fila.style.display = fila.textContent.toLowerCase().includes(filtro) ? "" : "none";
+        });
+    });
+
+    // Activar input solo cuando el checkbox esté seleccionado — igual al PHP
+    document.querySelectorAll(".seleccionar-repuesto").forEach(chk => {
+        chk.addEventListener("change", function () {
+            let input = this.closest("tr").querySelector(".cantidad-input");
+            if (this.checked) {
+                input.disabled = false;
+                input.value = 1;
+            } else {
+                input.disabled = true;
+                input.value = 0;
+            }
+        });
+    });
+</script>
+</body>
+</html>
