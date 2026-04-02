@@ -2,7 +2,6 @@ package com.proyectogaes.service;
 
 import com.proyectogaes.entity.*;
 import com.proyectogaes.repository.MantenimientoRepository;
-import com.proyectogaes.repository.MaquinaRepository;
 import com.proyectogaes.repository.InventarioRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -15,63 +14,36 @@ import java.util.Map;
 public class MantenimientoService {
 
     private final MantenimientoRepository mantenimientoRepo;
-    private final MaquinaRepository       maquinaRepo;
-    private final InventarioRepository     inventarioRepo;
+    private final InventarioRepository inventarioRepo;
 
     public MantenimientoService(MantenimientoRepository mantenimientoRepo,
-                                 MaquinaRepository maquinaRepo,
-                                 InventarioRepository inventarioRepo) {
+                                InventarioRepository inventarioRepo) {
         this.mantenimientoRepo = mantenimientoRepo;
-        this.maquinaRepo       = maquinaRepo;
         this.inventarioRepo    = inventarioRepo;
     }
 
     // ── Mis Mantenimientos activos ─────────────────────────────
-    // PHP: MisMantenimientos::index()
-    public List<MantenimientoDTO> getMisMantenimientos(Long idUsuario) {
-        return mantenimientoRepo.findAsignadosByTecnico(idUsuario);
+    public List<Mantenimiento> getMisMantenimientos(Long idUsuario) {
+        return mantenimientoRepo.buscarPorUsuario(idUsuario.intValue());
     }
 
     // ── Historial finalizado del técnico ───────────────────────
-    // PHP: obtenerHistorialPorTecnico($idTecnico, 'Finalizado')
-    public List<MantenimientoDTO> getHistorialTecnico(Long idUsuario) {
-        return mantenimientoRepo.findHistorialByTecnico(idUsuario, "Finalizado");
+    public List<Mantenimiento> getHistorialTecnico(Long idUsuario) {
+        return mantenimientoRepo.buscarPorTecnicoYEstado(idUsuario.intValue(), "Finalizado");
     }
 
-    // ── Datos para la pantalla de iniciar ─────────────────────
-    // PHP: $this->mantenimientosModel->select(...)->join('maquinas',...)->where(...)->first()
-    public MantenimientoDTO getDetalleConMaquina(Long id) {
-        return mantenimientoRepo.findDetalleConMaquina(id)
+    // ── Detalle de un mantenimiento ────────────────────────────
+    public Mantenimiento getDetalle(Long id) {
+        return mantenimientoRepo.findById(id)
                 .orElseThrow(() -> new RuntimeException("Mantenimiento no encontrado: " + id));
     }
 
-    // ── Datos de la máquina para mostrar el intervalo actual ──
-    // PHP: $maquina_info = $this->maquinasModel->find($mantenimiento['id_maquina'])
-    public Maquina getMaquinaDeMantenimiento(Long idMantenimiento) {
-        Mantenimiento m = mantenimientoRepo.findById(idMantenimiento)
-                .orElseThrow(() -> new RuntimeException("Mantenimiento no encontrado"));
-        return maquinaRepo.findById(m.getIdMaquina())
-                .orElseThrow(() -> new RuntimeException("Máquina no encontrada"));
-    }
-
     // ── Repuestos disponibles para el modal ────────────────────
-    // PHP: $this->repuestosModel->where('cantidad >', 0)->findAll()
     public List<Inventario> getRepuestosDisponibles() {
         return inventarioRepo.findByCantidadGreaterThan(0);
     }
 
-    // ── Detalle completo para detalle.html ─────────────────────
-    // PHP: MantenimientosModel::obtenerDetalleCompleto($id)
-    // Hace JOIN con maquinas + usuarios + detalle_mantenimiento (LEFT JOIN)
-    public MantenimientoDetalleDTO getDetalleCompleto(Long id) {
-        return mantenimientoRepo.findDetalleCompleto(id).orElse(null);
-    }
-
-    // ── Finalizar mantenimiento completo ───────────────────────
-    // PHP: MisMantenimientos::terminar() — hace todo de una sola vez:
-    //   1. Actualiza descripción y estado del mantenimiento → 'Finalizado'
-    //   2. Descuenta repuestos usados del inventario
-    //   3. Actualiza la máquina (fecha_ultimo_mantenimiento + intervalo)
+    // ── Finalizar mantenimiento ────────────────────────────────
     @Transactional
     public void finalizarCompleto(Long idMantenimiento,
                                    String descripcionTrabajo,
@@ -87,7 +59,6 @@ public class MantenimientoService {
         mantenimientoRepo.save(m);
 
         // 2. Descontar repuestos
-        // PHP: foreach ($repuestosUsados as $id_repuesto => $cantidad) { if ($cantidad > 0) ... }
         if (repuestosUsados != null) {
             repuestosUsados.forEach((idRepuesto, cantidad) -> {
                 if (cantidad != null && cantidad > 0) {
@@ -100,21 +71,20 @@ public class MantenimientoService {
         }
 
         // 3. Actualizar máquina
-        // PHP: $this->maquinasModel->update($id_maquina, ['fecha_ultimo_mantenimiento'=>..., 'intervalo_mantenimiento'=>...])
-        maquinaRepo.findById(m.getIdMaquina()).ifPresent(maquina -> {
-            maquina.setFechaUltimoMantenimiento(fechaUltimo);
-            maquina.setIntervaloMantenimiento(intervalo);
-            maquinaRepo.save(maquina);
-        });
+        if (m.getMaquina() != null) {
+            m.getMaquina().setFechaUltimoMantenimiento(fechaUltimo);
+            m.getMaquina().setIntervaloMantenimiento(intervalo);
+        }
+        mantenimientoRepo.save(m);
     }
 
     // ── Contadores para el dashboard ───────────────────────────
-    // PHP: $mantenimientos->where('id_usuario', $idUsuario)->countAllResults()
     public long countAsignados(Long idUsuario) {
-        return mantenimientoRepo.countByIdUsuario(idUsuario);
+        return mantenimientoRepo.buscarPorUsuario(idUsuario.intValue()).size();
     }
 
     public long countPendientes(Long idUsuario) {
-        return mantenimientoRepo.countByIdUsuarioAndEstadoNot(idUsuario, "Finalizado");
+        return mantenimientoRepo.buscarPorTecnicoYEstado(
+                idUsuario.intValue(), "Finalizado").size();
     }
 }
