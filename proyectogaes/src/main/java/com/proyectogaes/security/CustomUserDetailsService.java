@@ -21,17 +21,20 @@ public class CustomUserDetailsService implements UserDetailsService {
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
 
         Usuario usuario = usuarioRepository.findByUsername(username)
-                .orElseThrow(() -> new UsernameNotFoundException("Usuario no encontrado"));
+                .orElseThrow(() -> new UsernameNotFoundException("Usuario no encontrado: " + username));
 
-        // 🔥 convertir rol a formato Spring
-        String rolNombre = "ROLE_" + usuario.getRol().getDescripcion().toUpperCase();
+        // Convertir rol a formato Spring Security
+        // Si la BD tiene 'tecnico' → queda 'ROLE_TECNICO'
+        // Si la BD tiene 'administrador' → queda 'ROLE_ADMINISTRADOR'
+        String descripcionRol = usuario.getRol().getDescripcion();
+        String rolNombre = "ROLE_" + descripcionRol.trim().toUpperCase();
 
         List<GrantedAuthority> roles = List.of(new SimpleGrantedAuthority(rolNombre));
 
         return new org.springframework.security.core.userdetails.User(
                 usuario.getUsername(),
                 usuario.getPassword(),
-                usuario.getEstado().equals("Activo"),
+                usuario.getEstado().equalsIgnoreCase("Activo"),
                 true,
                 true,
                 true,
