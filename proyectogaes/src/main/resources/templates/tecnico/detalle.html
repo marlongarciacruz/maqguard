@@ -9,127 +9,75 @@
 </head>
 <body>
 
-<!--
-╔══════════════════════════════════════════════════════════════╗
-║  EQUIVALENTE A: Views/historialtec/view.php                  ║
-║  CONTROLLER:    GET /tecnico/historial/{id}                  ║
-║  DATOS:         detalle (MantenimientoDetalleDTO)            ║
-╚══════════════════════════════════════════════════════════════╝
--->
-
 <div class="container py-4">
 
-    <!-- Encabezado con botón volver -->
     <div class="mb-4">
-        <!-- PHP: href="<?= base_url('historial'); ?>" -->
         <a th:href="@{/tecnico/historial}" class="btn btn-outline-secondary mb-2">
             <i class="bi bi-arrow-left"></i> Volver al Historial
         </a>
-
-        <!-- PHP: Reporte Técnico #<?= esc($mantenimiento['id_mantenimiento']) ?> -->
-        <h2 class="fw-bold text-dark mb-1" style="font-size:1.9rem;">
+        <h2 class="fw-bold text-dark mb-1">
             📰 Reporte Técnico
-            #<span class="text-primary" th:text="${detalle.idMantenimiento}">0</span>
+            #<span class="text-primary" th:text="${detalle.id_mantenimiento}">0</span>
         </h2>
-        <p class="text-muted" style="font-size:0.95rem;">
-            Información detallada del servicio de mantenimiento finalizado.
-        </p>
+        <p class="text-muted">Información detallada del servicio de mantenimiento finalizado.</p>
     </div>
 
     <div class="row g-4">
 
-        <!-- Columna izquierda: descripciones -->
+        <!-- Columna izquierda -->
         <div class="col-lg-7">
             <div class="card shadow-sm border-0 rounded-4 p-4">
 
-                <h4 class="fw-bold mb-3" style="font-size:1.3rem;">Detalles y Observaciones</h4>
+                <h4 class="fw-bold mb-3">Detalles y Observaciones</h4>
 
-                <!-- PHP: esc($mantenimiento['descripcion_trabajo']) -->
                 <div class="mb-4">
                     <h6 class="fw-semibold text-primary mb-1">
-                        Descripción Inicial de la Orden (Motivo del Mantenimiento):
+                        Descripción Inicial de la Orden:
                     </h6>
+                    <!-- Ahora usamos detalle.descripcionTrabajo directamente -->
                     <p th:text="${detalle.descripcionTrabajo}">Descripción...</p>
                 </div>
 
-                <hr/>
-
-                <!-- PHP: nl2br(esc($mantenimiento['detalles_completos'])) -->
-                <h6 class="fw-semibold text-primary mb-2">Reporte Técnico Final:</h6>
-                <div class="bg-light p-3 rounded-3 border" style="font-size:0.95rem;">
-
-                    <p th:if="${detalle.detallesCompletos != null and !detalle.detallesCompletos.isEmpty()}"
-                       style="white-space: pre-wrap; font-size:1rem;"
-                       th:text="${detalle.detallesCompletos}">
-                        Reporte...
-                    </p>
-
-                    <div th:unless="${detalle.detallesCompletos != null and !detalle.detallesCompletos.isEmpty()}"
-                         class="alert alert-warning text-center small mb-0">
-                        No se encontró un reporte técnico detallado de la intervención.
-                    </div>
-
-                </div>
             </div>
         </div>
 
-        <!-- Columna derecha: datos clave -->
+        <!-- Columna derecha -->
         <div class="col-lg-5">
             <div class="row g-3">
 
-                <!-- Técnico — PHP: esc($mantenimiento['nombre_tecnico']) -->
+                <!-- Técnico — ahora usamos detalle.usuario.nombre -->
                 <div class="col-12">
                     <div class="p-3 bg-white rounded-4 shadow-sm border-start border-4 border-success">
                         <div class="text-muted mb-0" style="font-size:0.9rem;">Técnico Responsable:</div>
                         <div class="fw-bold text-success" style="font-size:1.3rem;"
-                             th:text="${detalle.nombreTecnico}">Técnico</div>
+                             th:text="${detalle.usuario.nombre}">Técnico</div>
                     </div>
                 </div>
 
-                <!-- Máquina — PHP: esc($mantenimiento['nombre_maquina']) -->
+                <!-- Máquina — ahora usamos detalle.maquina.nombre -->
                 <div class="col-12">
                     <div class="p-3 bg-white rounded-4 shadow-sm border-start border-4 border-warning">
                         <div class="text-muted mb-0" style="font-size:0.9rem;">Máquina Afectada:</div>
                         <div class="fw-bold text-warning" style="font-size:1.25rem;"
-                             th:text="${detalle.nombreMaquina}">Máquina</div>
+                             th:text="${detalle.maquina.nombre}">Máquina</div>
                     </div>
                 </div>
 
-                <!-- Fechas -->
+                <!-- Fecha -->
                 <div class="col-12">
                     <div class="p-3 bg-white rounded-4 shadow-sm">
-
-                        <!-- PHP: date('d M Y', strtotime(esc($mantenimiento['fecha_mantenimiento']))) -->
-                        <div class="text-muted mb-0" style="font-size:0.9rem;">Fecha de Creación de la Orden:</div>
-                        <div class="fw-bold" style="font-size:1rem;"
+                        <div class="text-muted mb-0" style="font-size:0.9rem;">Fecha de la Orden:</div>
+                        <div class="fw-bold"
                              th:text="${#temporals.format(detalle.fechaMantenimiento, 'dd MMM yyyy')}">
                             01 Jan 2025
                         </div>
-
-                        <!-- PHP: $mantenimiento['fecha_inicio'] y $mantenimiento['fecha_fin'] -->
-                        <div class="text-muted mt-2 mb-0" style="font-size:0.9rem;">Periodo de Intervención:</div>
-                        <div style="font-size:0.95rem;">
-                            <span th:if="${detalle.fechaInicio != null and detalle.fechaFin != null}">
-                                <span class="badge bg-secondary me-1">
-                                    Inicio: <span th:text="${#temporals.format(detalle.fechaInicio, 'dd/MM/yyyy')}">-</span>
-                                </span>
-                                <span class="badge bg-secondary">
-                                    Fin: <span th:text="${#temporals.format(detalle.fechaFin, 'dd/MM/yyyy')}">-</span>
-                                </span>
-                            </span>
-                            <span th:unless="${detalle.fechaInicio != null and detalle.fechaFin != null}"
-                                  class="badge bg-danger">
-                                Fechas de intervención no registradas.
-                            </span>
-                        </div>
-
                     </div>
                 </div>
 
-                <!-- Costo — PHP: number_format(esc($mantenimiento['costo_mantenimiento']), 2) -->
+                <!-- Costo — ahora costoMantenimiento es Double no BigDecimal -->
                 <div class="col-12">
                     <div class="p-3 bg-white rounded-4 shadow-sm border-start border-4 border-danger">
-                        <div class="text-muted mb-0" style="font-size:0.9rem;">Costo Total del Mantenimiento:</div>
+                        <div class="text-muted mb-0" style="font-size:0.9rem;">Costo Total:</div>
                         <div class="fw-bold text-danger" style="font-size:1.4rem;">
                             $<span th:text="${#numbers.formatDecimal(detalle.costoMantenimiento, 1, 'COMMA', 2, 'POINT')}">0.00</span>
                         </div>
@@ -141,7 +89,7 @@
                     <div class="p-3 bg-light rounded-4 border">
                         <div class="row">
                             <div class="col-6">
-                                <div class="text-muted mb-1" style="font-size:0.8rem;">Tipo de Servicio:</div>
+                                <div class="text-muted mb-1" style="font-size:0.8rem;">Tipo:</div>
                                 <span th:text="${detalle.tipoMantenimiento}"
                                       th:class="${detalle.tipoMantenimiento == 'Preventivo'} ? 'badge bg-success' : 'badge bg-warning text-dark'">
                                     Tipo
