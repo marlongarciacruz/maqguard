@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>Detalle de Mantenimiento - MaqGuard</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"/>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css"/>
+</head>
+<body>
+
+<div class="container py-4">
+
+    <div class="mb-4">
+        <a th:href="@{/tecnico/historial}" class="btn btn-outline-secondary mb-2">
+            <i class="bi bi-arrow-left"></i> Volver al Historial
+        </a>
+        <h2 class="fw-bold text-dark mb-1">
+            📰 Reporte Técnico
+            #<span class="text-primary" th:text="${detalle.id_mantenimiento}">0</span>
+        </h2>
+        <p class="text-muted">Información detallada del servicio de mantenimiento finalizado.</p>
+    </div>
+
+    <div class="row g-4">
+
+        <!-- Columna izquierda -->
+        <div class="col-lg-7">
+            <div class="card shadow-sm border-0 rounded-4 p-4">
+
+                <h4 class="fw-bold mb-3">Detalles y Observaciones</h4>
+
+                <div class="mb-4">
+                    <h6 class="fw-semibold text-primary mb-1">
+                        Descripción Inicial de la Orden:
+                    </h6>
+                    <!-- Ahora usamos detalle.descripcionTrabajo directamente -->
+                    <p th:text="${detalle.descripcionTrabajo}">Descripción...</p>
+                </div>
+
+            </div>
+        </div>
+
+        <!-- Columna derecha -->
+        <div class="col-lg-5">
+            <div class="row g-3">
+
+                <!-- Técnico — ahora usamos detalle.usuario.nombre -->
+                <div class="col-12">
+                    <div class="p-3 bg-white rounded-4 shadow-sm border-start border-4 border-success">
+                        <div class="text-muted mb-0" style="font-size:0.9rem;">Técnico Responsable:</div>
+                        <div class="fw-bold text-success" style="font-size:1.3rem;"
+                             th:text="${detalle.usuario.nombre}">Técnico</div>
+                    </div>
+                </div>
+
+                <!-- Máquina — ahora usamos detalle.maquina.nombre -->
+                <div class="col-12">
+                    <div class="p-3 bg-white rounded-4 shadow-sm border-start border-4 border-warning">
+                        <div class="text-muted mb-0" style="font-size:0.9rem;">Máquina Afectada:</div>
+                        <div class="fw-bold text-warning" style="font-size:1.25rem;"
+                             th:text="${detalle.maquina.nombre}">Máquina</div>
+                    </div>
+                </div>
+
+                <!-- Fecha -->
+                <div class="col-12">
+                    <div class="p-3 bg-white rounded-4 shadow-sm">
+                        <div class="text-muted mb-0" style="font-size:0.9rem;">Fecha de la Orden:</div>
+                        <div class="fw-bold"
+                             th:text="${#temporals.format(detalle.fechaMantenimiento, 'dd MMM yyyy')}">
+                            01 Jan 2025
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Costo — ahora costoMantenimiento es Double no BigDecimal -->
+                <div class="col-12">
+                    <div class="p-3 bg-white rounded-4 shadow-sm border-start border-4 border-danger">
+                        <div class="text-muted mb-0" style="font-size:0.9rem;">Costo Total:</div>
+                        <div class="fw-bold text-danger" style="font-size:1.4rem;">
+                            $<span th:text="${#numbers.formatDecimal(detalle.costoMantenimiento, 1, 'COMMA', 2, 'POINT')}">0.00</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Tipo y Estado -->
+                <div class="col-12">
+                    <div class="p-3 bg-light rounded-4 border">
+                        <div class="row">
+                            <div class="col-6">
+                                <div class="text-muted mb-1" style="font-size:0.8rem;">Tipo:</div>
+                                <span th:text="${detalle.tipoMantenimiento}"
+                                      th:class="${detalle.tipoMantenimiento == 'Preventivo'} ? 'badge bg-success' : 'badge bg-warning text-dark'">
+                                    Tipo
+                                </span>
+                            </div>
+                            <div class="col-6 text-end">
+                                <div class="text-muted mb-1" style="font-size:0.8rem;">Estado:</div>
+                                <span class="badge bg-primary" th:text="${detalle.estado}">Estado</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

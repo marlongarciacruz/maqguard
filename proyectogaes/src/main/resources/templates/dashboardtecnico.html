@@ -152,13 +152,15 @@
                         <a class="nav-link active" th:href="@{/inicio}"><i class="bi bi-house-door-fill me-1"></i> Bienvenido</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link text-white-50" th:href="@{/mismantenimientos}"><i class="bi bi-tools me-1"></i> Mis Mantenimientos</a>
+                        <!-- CORREGIDO: /mismantenimientos → /tecnico/mismantenimientos -->
+                        <a class="nav-link text-white-50" th:href="@{/tecnico/mismantenimientos}"><i class="bi bi-tools me-1"></i> Mis Mantenimientos</a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link text-white-50" th:href="@{/falla}"><i class="bi bi-exclamation-triangle-fill me-1"></i> Reportar Falla</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link text-white-50" th:href="@{/historial}"><i class="bi bi-clock-history me-1"></i> Historial</a>
+                        <!-- CORREGIDO: /historial → /tecnico/historial -->
+                        <a class="nav-link text-white-50" th:href="@{/tecnico/historial}"><i class="bi bi-clock-history me-1"></i> Historial</a>
                     </li>
                 </ul>
 
@@ -271,7 +273,8 @@
                     <div class="card-body p-4">
                         <img src="https://cdn-icons-png.flaticon.com/128/2471/2471121.png" width="64" class="mb-3">
                         <h5 class="fw-bold">Mis Mantenimientos</h5>
-                        <a th:href="@{/mismantenimientos}" class="btn btn-primary rounded-pill px-4 stretched-link">Gestionar</a>
+                        <!-- CORREGIDO: /mismantenimientos → /tecnico/mismantenimientos -->
+                        <a th:href="@{/tecnico/mismantenimientos}" class="btn btn-primary rounded-pill px-4 stretched-link">Gestionar</a>
                     </div>
                 </div>
             </div>
@@ -298,7 +301,8 @@
                     <div class="card-body p-4">
                         <img src="https://cdn-icons-png.flaticon.com/128/13518/13518092.png" width="64" class="mb-3">
                         <h5 class="fw-bold">Mi Historial</h5>
-                        <a th:href="@{/historial}" class="btn btn-secondary rounded-pill px-4 stretched-link">Consultar</a>
+                        <!-- CORREGIDO: /historial → /tecnico/historial -->
+                        <a th:href="@{/tecnico/historial}" class="btn btn-secondary rounded-pill px-4 stretched-link">Consultar</a>
                     </div>
                 </div>
             </div>
@@ -315,7 +319,8 @@
                 <div class="col-md-2 mb-4">
                     <h6 class="text-info fw-bold mb-3 small text-uppercase">Navegación</h6>
                     <ul class="list-unstyled small">
-                        <li class="mb-2"><a th:href="@{/mismantenimientos}" class="text-white-50 text-decoration-none hover-link">Tareas</a></li>
+                        <!-- CORREGIDO: /mismantenimientos → /tecnico/mismantenimientos -->
+                        <li class="mb-2"><a th:href="@{/tecnico/mismantenimientos}" class="text-white-50 text-decoration-none hover-link">Tareas</a></li>
                         <li class="mb-2"><a th:href="@{/falla}" class="text-white-50 text-decoration-none hover-link">Reportar</a></li>
                     </ul>
                 </div>
