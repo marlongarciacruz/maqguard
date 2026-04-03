@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" th:replace="~{plantillaadmin/layout :: layout(~{::contenido})}">
+<head>
+    <style>
+        .notification-item { transition: all 0.2s ease; border-left: 4px solid transparent; }
+        .notification-item:hover { background-color: #f8f9fa; transform: translateX(2px); }
+        .notification-unread { background-color: #f0f8ff; border-left-color: #0d6efd; }
+        .notification-read { background-color: #fff; border-left-color: #dee2e6; opacity: 0.85; }
+        .icon-circle { width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1.1rem; }
+    </style>
+</head>
+<body>
+    <div th:fragment="contenido" class="container my-5">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <div>
+                <h2 class="fw-bold text-dark mb-1" th:text="${titulo}">Centro de Notificaciones</h2>
+                <p class="text-muted mb-0">Alertas, avisos y actualizaciones del sistema.</p>
+            </div>
+
+            <form th:action="@{/notificaciones/marcarTodasLeidas}" method="post">
+                <button type="submit" class="btn btn-outline-primary btn-sm rounded-pill px-3 shadow-sm" 
+                        onclick="return confirm('¿Marcar todo como leído?');">
+                    <i class="bi bi-check2-all me-1"></i> Marcar todo leído
+                </button>
+            </form>
+        </div>
+
+        <div class="card shadow-lg border-0 rounded-4 overflow-hidden">
+            <div th:if="${#lists.isEmpty(notificaciones)}" class="text-center py-5">
+                <div class="mb-3 opacity-25">
+                    <i class="bi bi-bell-slash text-secondary" style="font-size: 4rem;"></i>
+                </div>
+                <h5 class="fw-bold text-secondary">Estás al día</h5>
+                <p class="text-muted small">No tienes notificaciones pendientes.</p>
+            </div>
+
+            <div th:unless="${#lists.isEmpty(notificaciones)}" class="list-group list-group-flush">
+                <div th:each="n : ${notificaciones}" 
+                     class="list-group-item p-4 border-bottom notification-item"
+                     th:classappend="${n.leida == 0 ? 'notification-unread' : 'notification-read'}">
+                    
+                    <div class="d-flex align-start">
+                        <div class="flex-shrink-0 me-3">
+                            <div class="icon-circle shadow-sm" 
+                                 th:classappend="${n.leida == 0 ? 'bg-primary text-white' : 'bg-light text-secondary'}">
+                                <i class="bi bi-bell-fill"></i>
+                            </div>
+                        </div>
+
+                        <div class="flex-grow-1">
+                            <div class="d-flex justify-content-between align-items-start">
+                                <h6 class="fw-bold mb-1 text-dark" th:text="${n.titulo}">Título</h6>
+                                <small class="text-muted" style="font-size: 0.75rem;" 
+                                       th:text="${#temporals.format(n.fechaCreacion, 'dd MMM, hh:mm a')}">
+                                    Fecha
+                                </small>
+                            </div>
+                            <p class="text-secondary mb-2 small" th:text="${n.mensaje}">Mensaje de prueba</p>
+
+                            <div class="d-flex align-items-center justify-content-between">
+                                <div class="d-flex align-items-center">
+                                    <i class="bi bi-person-circle text-muted me-1"></i>
+                                    <small class="text-muted fw-semibold" style="font-size: 0.8rem;"
+                                           th:text="${n.usuario != null ? n.usuario.nombre : 'Sistema'}">
+                                        Usuario
+                                    </small>
+                                </div>
+
+                                <div class="d-flex gap-2">
+                                    <a th:if="${n.leida == 0}" 
+                                       th:href="@{/notificaciones/marcarLeida/{id}(id=${n.idNotificacion})}"
+                                       class="btn btn-sm btn-light text-success border-0 rounded-pill px-3 fw-bold">
+                                        <i class="bi bi-check2 me-1"></i> Leído
+                                    </a>
+                                    <a th:href="@{/notificaciones/eliminar/{id}(id=${n.idNotificacion})}"
+                                       class="btn btn-sm btn-light text-danger border-0 rounded-circle"
+                                       onclick="return confirm('¿Eliminar notificación?');">
+                                        <i class="bi bi-x-lg"></i>
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

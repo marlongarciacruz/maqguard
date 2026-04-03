@@ -44,14 +44,20 @@ public class ManteAdminController {
 
     @GetMapping("/crear")
     public String formularioCrear(Model model) {
-        Mantenimiento mantenimiento = new Mantenimiento();
-        mantenimiento.setEstado("Pendiente");
+        try {
+            Mantenimiento mantenimiento = new Mantenimiento();
+            mantenimiento.setEstado("Pendiente");
 
-        model.addAttribute("mantenimiento", mantenimiento);
-        model.addAttribute("maquinas", maquinasRepository.findAll());
-        model.addAttribute("usuarios", usuarioRepository.findAll());
+            model.addAttribute("mantenimiento", mantenimiento);
+            model.addAttribute("maquinas", maquinasRepository.findAll());
+            model.addAttribute("usuarios", usuarioRepository.findAll());
 
-        return "mantenimientosadmin/crearmanteadmin";
+            return "mantenimientosadmin/crearmanteadmin";
+        } catch (Exception e) {
+            // Esto imprimirá el error real en tu consola negra
+            e.printStackTrace();
+            return "error";
+        }
     }
 
     @GetMapping("/editar/{id}")
@@ -104,9 +110,9 @@ public class ManteAdminController {
             Sheet sheet = workbook.createSheet("Historial Mantenimientos");
 
             Row header = sheet.createRow(0);
-            String[] columnas = {"ID","Fecha","Máquina","Técnico","Tipo","Descripción","Costo","Estado"};
+            String[] columnas = { "ID", "Fecha", "Máquina", "Técnico", "Tipo", "Descripción", "Costo", "Estado" };
 
-            for(int i=0;i<columnas.length;i++){
+            for (int i = 0; i < columnas.length; i++) {
                 header.createCell(i).setCellValue(columnas[i]);
             }
 
@@ -118,13 +124,12 @@ public class ManteAdminController {
 
                 row.createCell(0).setCellValue(m.getId_mantenimiento());
                 row.createCell(1).setCellValue(
-                        m.getFechaMantenimiento()!=null ? m.getFechaMantenimiento().format(formatter) : ""
-                );
-                row.createCell(2).setCellValue(m.getMaquina()!=null ? m.getMaquina().getNombre() : "N/A");
-                row.createCell(3).setCellValue(m.getUsuario()!=null ? m.getUsuario().getNombre() : "N/A");
+                        m.getFechaMantenimiento() != null ? m.getFechaMantenimiento().format(formatter) : "");
+                row.createCell(2).setCellValue(m.getMaquina() != null ? m.getMaquina().getNombre() : "N/A");
+                row.createCell(3).setCellValue(m.getUsuario() != null ? m.getUsuario().getNombre() : "N/A");
                 row.createCell(4).setCellValue(m.getTipoMantenimiento());
                 row.createCell(5).setCellValue(m.getDescripcionTrabajo());
-                row.createCell(6).setCellValue(m.getCostoMantenimiento()!=null ? m.getCostoMantenimiento() : 0.0);
+                row.createCell(6).setCellValue(m.getCostoMantenimiento() != null ? m.getCostoMantenimiento() : 0.0);
                 row.createCell(7).setCellValue(m.getEstado());
             }
 
