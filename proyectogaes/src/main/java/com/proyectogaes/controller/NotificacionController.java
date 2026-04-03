@@ -21,23 +21,28 @@ public class NotificacionController {
         Object idObj = session.getAttribute("id_usuario");
         Object rolObj = session.getAttribute("id_rol");
 
-        // DIAGNÓSTICO: Esto aparecerá en tu terminal de VS Code/IntelliJ
-        System.out.println("DEBUG - ID en Sesión: " + idObj);
-        System.out.println("DEBUG - Rol en Sesión: " + rolObj);
-
+        // 1. Romper el bucle de redirección infinita del login
         if (idObj == null) {
-            // Si entra aquí, el problema es que el LoginSuccessHandler NO está guardando el ID
-            System.out.println("ERROR: Sesión vacía, redirigiendo...");
-            return "redirect:/login"; 
+            System.out.println("DEBUG: Sesión vacía en Notificaciones, redirigiendo a /inicio para evitar bucle.");
+            return "redirect:/inicio";
         }
 
         Integer idUsuario = Integer.valueOf(idObj.toString());
         Integer idRol = (rolObj != null) ? Integer.valueOf(rolObj.toString()) : 0;
 
-        List<Notificacion> lista = (idRol == 1) ? notificacionRepository.listarTodas() : notificacionRepository.listarPorUsuario(idUsuario);
-        
-        model.addAttribute("titulo", (idRol == 1) ? "Notificaciones del Sistema" : "Mis Notificaciones");
+        // 2. Lógica de carga según el Rol (1 = Administrador)
+        List<Notificacion> lista;
+        if (idRol == 1) {
+            lista = notificacionRepository.listarTodas();
+            model.addAttribute("titulo", "Notificaciones del Sistema");
+        } else {
+            lista = notificacionRepository.listarPorUsuario(idUsuario);
+            model.addAttribute("titulo", "Mis Notificaciones");
+        }
+
         model.addAttribute("notificaciones", lista);
+        
+        // 3. Asegúrate de que esta carpeta y archivo existan exactamente así
         return "notificacionadmin/notificaciones";
     }
 
@@ -54,8 +59,8 @@ public class NotificacionController {
     public String marcarTodasLeidas(HttpSession session) {
         Object idObj = session.getAttribute("id_usuario");
         Object rolObj = session.getAttribute("id_rol");
-        
-        if (idObj == null) return "redirect:/login";
+
+        if (idObj == null) return "redirect:/inicio";
 
         Integer idUsuario = Integer.valueOf(idObj.toString());
         Integer idRol = (rolObj != null) ? Integer.valueOf(rolObj.toString()) : 0;

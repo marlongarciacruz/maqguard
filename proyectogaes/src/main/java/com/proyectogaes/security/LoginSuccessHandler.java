@@ -26,15 +26,15 @@ public class LoginSuccessHandler implements AuthenticationSuccessHandler {
         Usuario usuario = usuarioRepository.findByUsername(username).orElse(null);
 
         if (usuario != null) {
+            // Forzamos la creación de una sesión nueva y limpia
             HttpSession session = request.getSession(true);
             session.setAttribute("id_usuario", usuario.getId());
             session.setAttribute("id_rol", (usuario.getRol() != null) ? usuario.getRol().getId() : 0);
             
-            // LOG PARA CONFIRMAR EN CONSOLA
-            System.out.println(">>> SESION INICIADA: Guardado ID " + usuario.getId() + " para " + username);
+            System.out.println("===> SESION CREADA: ID " + usuario.getId() + " para el usuario " + username);
         }
 
-        // REDIRECCIÓN MANUAL DESDE EL HANDLER
+        // Redirección manual obligatoria
         response.sendRedirect(request.getContextPath() + "/inicio");
     }
 }

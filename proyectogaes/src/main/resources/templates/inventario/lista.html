@@ -10,6 +10,7 @@
 </head>
 
 <body>
+
     <nav class="navbar navbar-expand-lg navbar-dark shadow-sm py-3"
         style="background-color:#4B4F54; border-bottom:3px solid #f97316;">
         <div class="container">
@@ -33,7 +34,8 @@
                     <li class="nav-item"><a class="nav-link active" th:href="@{/inicio}"><i
                                 class="bi bi-house-door-fill"></i></a></li>
                     <li class="nav-item"><a class="nav-link text-white-50" th:href="@{/maquinas}"><i
-                                class="bi bi-cpu"></i> Máquinas</a></li>
+                                class="bi bi-cpu"></i>
+                            Máquinas</a></li>
                     <li class="nav-item"><a class="nav-link text-white-50" th:href="@{/inventario}"><i
                                 class="bi bi-box-seam"></i> Inventario</a></li>
                     <li class="nav-item"><a class="nav-link text-white-50" th:href="@{/mantenimientos}"><i
@@ -78,7 +80,8 @@
                             </div>
                             <li class="p-2 bg-light text-center border-top">
                                 <a class="text-decoration-none small fw-bold text-primary"
-                                    th:href="@{/notificaciones}">Ver Historial Completo</a>
+                                    th:href="@{/notificaciones}">Ver
+                                    Historial Completo</a>
                             </li>
                         </ul>
                     </li>
@@ -135,10 +138,35 @@
             </div>
         </div>
 
-        <div class="card shadow border-0">
+        <div class="card shadow-sm border-0 mb-4 bg-light">
+            <div class="card-body">
+                <div class="row g-3">
+                    <div class="col-md-6">
+                        <div class="input-group">
+                            <span class="input-group-text bg-white border-end-0"><i class="bi bi-search"></i></span>
+                            <input type="text" id="searchInput" class="form-control border-start-0"
+                                placeholder="Buscar por nombre, código o ubicación...">
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <select id="stockFilter" class="form-select">
+                            <option value="todos">Todos los niveles de stock</option>
+                            <option value="stock-bajo">⚠️ Stock Crítico (Bajo)</option>
+                            <option value="stock-medio">🆗 Stock Normal</option>
+                            <option value="stock-alto">📦 Stock Alto</option>
+                        </select>
+                    </div>
+                    <div class="col-md-2 text-end">
+                        <button class="btn btn-secondary w-100" onclick="limpiarFiltros()">Limpiar</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="card shadow border-0 rounded-4 overflow-hidden">
             <div class="card-body p-0">
                 <div class="table-responsive">
-                    <table class="table table-hover align-middle mb-0">
+                    <table class="table table-hover align-middle mb-0" id="inventarioTable">
                         <thead class="table-dark">
                             <tr>
                                 <th class="ps-4">Producto / Referencia</th>
@@ -149,41 +177,38 @@
                             </tr>
                         </thead>
                         <tbody>
-                            <tr th:if="${#lists.isEmpty(inventario)}">
+                            <tr th:if="${#lists.isEmpty(inventario)}" id="noResultRow">
                                 <td colspan="5" class="text-center py-5 text-muted">
                                     <i class="bi bi-info-circle fs-2 d-block mb-2"></i>
                                     No hay repuestos registrados en el inventario.
                                 </td>
                             </tr>
 
-                            <tr th:each="inv : ${inventario}">
+                            <tr th:each="inv : ${inventario}" class="repuesto-row">
                                 <td class="ps-4">
-                                    <div class="fw-bold text-dark" th:text="${inv.nombre}">Nombre</div>
-                                    <small class="text-muted" th:text="${'REF: ' + inv.codigo_pieza}"></small>
+                                    <div class="fw-bold text-dark item-name" th:text="${inv.nombre}">Nombre</div>
+                                    <small class="text-muted item-code" th:text="${'REF: ' + inv.codigo_pieza}"></small>
                                 </td>
                                 <td>
                                     <i class="bi bi-geo-alt text-secondary me-1"></i>
-                                    <span th:text="${inv.ubicacion_almacen}"></span>
+                                    <span class="item-loc" th:text="${inv.ubicacion_almacen}"></span>
                                 </td>
                                 <td class="text-center">
-                                    <span th:class="'badge rounded-pill p-2 px-3 ' + 
-                                        (${inv.cantidad} > 20 ? 'stock-alto' : 
-                                        (${inv.cantidad} > ${inv.stock_minimo} ? 'stock-medio' : 'stock-bajo'))"
+                                    <span
+                                        th:class="'badge rounded-pill p-2 px-3 stock-badge ' + 
+                                    (${inv.cantidad} > 20 ? 'stock-alto bg-success' : 
+                                    (${inv.cantidad} > ${inv.stock_minimo} ? 'stock-medio bg-info text-white' : 'stock-bajo bg-danger'))"
                                         th:text="${inv.cantidad}">0</span>
                                 </td>
                                 <td class="text-center text-muted" th:text="${inv.stock_minimo}">0</td>
                                 <td class="text-end pe-4">
                                     <div class="btn-group">
                                         <a th:href="@{/inventario/editar/{id}(id=${inv.id_repuesto})}"
-                                            class="btn btn-sm btn-outline-warning" title="Editar">
-                                            <i class="bi bi-pencil-square"></i>
-                                        </a>
+                                            class="btn btn-sm btn-outline-warning"><i
+                                                class="bi bi-pencil-square"></i></a>
                                         <a th:href="@{/inventario/eliminar/{id}(id=${inv.id_repuesto})}"
                                             class="btn btn-sm btn-outline-danger"
-                                            onclick="return confirm('¿Estás seguro de eliminar este artículo?')"
-                                            title="Eliminar">
-                                            <i class="bi bi-trash"></i>
-                                        </a>
+                                            onclick="return confirm('¿Eliminar?')"><i class="bi bi-trash"></i></a>
                                     </div>
                                 </td>
                             </tr>
@@ -193,6 +218,42 @@
             </div>
         </div>
     </div>
+
+    <script>
+        const searchInput = document.getElementById('searchInput');
+        const stockFilter = document.getElementById('stockFilter');
+        const rows = document.querySelectorAll('.repuesto-row');
+
+        function filtrar() {
+            const searchText = searchInput.value.toLowerCase();
+            const filterValue = stockFilter.value;
+
+            rows.forEach(row => {
+                const nombre = row.querySelector('.item-name').textContent.toLowerCase();
+                const codigo = row.querySelector('.item-code').textContent.toLowerCase();
+                const ubicacion = row.querySelector('.item-loc').textContent.toLowerCase();
+                const badge = row.querySelector('.stock-badge');
+
+                const coincideBusqueda = nombre.includes(searchText) || codigo.includes(searchText) || ubicacion.includes(searchText);
+                const coincideFiltro = filterValue === 'todos' || badge.classList.contains(filterValue);
+
+                if (coincideBusqueda && coincideFiltro) {
+                    row.style.display = '';
+                } else {
+                    row.style.display = 'none';
+                }
+            });
+        }
+
+        function limpiarFiltros() {
+            searchInput.value = '';
+            stockFilter.value = 'todos';
+            filtrar();
+        }
+
+        searchInput.addEventListener('keyup', filtrar);
+        stockFilter.addEventListener('change', filtrar);
+    </script>
     <br><br>
     <footer class="mt-auto pt-5 pb-4 text-light" style="background-color:#4B4F54; border-top:3px solid #f97316;">
         <div class="container text-md-start">
