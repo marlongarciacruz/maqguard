@@ -6,122 +6,7 @@
     <title>Nueva Máquina | MaqGuard</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
-    <style>
-        body {
-            background-color: #f8f9fa;
-            font-family: 'Segoe UI', sans-serif;
-        }
-
-        .navbar-hover .nav-link {
-            transition: color 0.3s ease, transform 0.2s ease, box-shadow 0.3s ease;
-        }
-
-        .navbar-hover .nav-link:hover {
-            color: #fff !important;
-            transform: translateY(-2px);
-            box-shadow: 0 4px 8px rgba(255, 255, 255, 0.1), 0 0 2px rgba(255, 255, 255, 0.5);
-        }
-
-        .navbar-hover .nav-link.active {
-            color: #fff !important;
-            font-weight: 600 !important;
-        }
-
-        /* --- NOTIFICACIONES --- */
-        .badge-pulse {
-            animation: pulse-red 2s infinite;
-        }
-
-        @keyframes pulse-red {
-            0% {
-                transform: scale(0.95);
-                box-shadow: 0 0 0 0 rgba(220, 53, 69, 0.7);
-            }
-
-            70% {
-                transform: scale(1);
-                box-shadow: 0 0 0 10px rgba(220, 53, 69, 0);
-            }
-
-            100% {
-                transform: scale(0.95);
-                box-shadow: 0 0 0 0 rgba(220, 53, 69, 0);
-            }
-        }
-
-        .notification-dropdown {
-            width: 350px;
-            padding: 0;
-            border: none;
-            overflow: hidden;
-        }
-
-        .notification-item {
-            border-bottom: 1px solid #f0f0f0;
-            transition: background 0.2s;
-            white-space: normal;
-        }
-
-        .notification-item:hover {
-            background-color: #f8f9fa;
-        }
-
-        .notification-item.unread {
-            background-color: #f0f8ff;
-        }
-
-        .noti-icon-circle {
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            flex-shrink: 0;
-        }
-
-        /* --- DASHBOARD CARDS --- */
-        .hover-lift {
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
-        }
-
-        .hover-lift:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 .5rem 1rem rgba(0, 0, 0, .15) !important;
-        }
-
-        .icon-box {
-            width: 50px;
-            height: 50px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            border-radius: 12px;
-        }
-
-        .card-kpi {
-            border-left: 5px solid transparent;
-        }
-
-        /* --- FOOTER --- */
-        .hover-link {
-            transition: all 0.3s ease;
-            display: inline-block;
-        }
-
-        .hover-link:hover {
-            color: #fff !important;
-            transform: translateX(5px);
-        }
-
-        .hover-icon {
-            transition: color 0.3s;
-        }
-
-        .hover-icon:hover {
-            color: #0d6efd !important;
-        }
-    </style>
+    <link rel="stylesheet" th:href="@{/css/maquinas.css}">
 </head>
 
 <body>
@@ -151,7 +36,7 @@
                                 class="bi bi-cpu"></i> Máquinas</a></li>
                     <li class="nav-item"><a class="nav-link text-white-50" th:href="@{/inventario}"><i
                                 class="bi bi-box-seam"></i> Inventario</a></li>
-                    <li class="nav-item"><a class="nav-link text-white-50" th:href="@{/mantenimiento}"><i
+                    <li class="nav-item"><a class="nav-link text-white-50" th:href="@{/mantenimientos}"><i
                                 class="bi bi-tools"></i> Mantenimiento</a></li>
                     <li class="nav-item"><a class="nav-link text-white-50" th:href="@{/alertas}"><i
                                 class="bi bi-exclamation-triangle"></i> Alertas</a></li>

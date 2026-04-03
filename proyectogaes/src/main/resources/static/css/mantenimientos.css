@@ -1,38 +1,102 @@
-body {
-    background: #f4f6f9;
-}
+/* --- ESTILOS DE LA TABLA Y EFECTOS --- */
+        .machine-icon-box {
+            width: 42px;
+            height: 42px;
+            background: #f8f9fa;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #6c757d;
+            font-size: 1.2rem;
+            transition: all 0.2s;
+        }
 
-.card {
-    border-radius: 15px;
-    border: none;
-}
+        .table-hover tbody tr:hover .machine-icon-box {
+            background-color: #e9ecef;
+            color: #0d6efd;
+        }
 
-.table thead {
-    font-size: 14px;
-}
+        .table-hover tbody tr:hover {
+            background-color: #fff;
+            transform: translateY(-1px);
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+            z-index: 10;
+            position: relative;
+        }
 
-.btn {
-    border-radius: 10px;
-}
+        .avatar-initials {
+            width: 30px;
+            height: 30px;
+            background-color: #e3f2fd;
+            color: #0d6efd;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 0.8rem;
+            margin-right: 8px;
+        }
 
-.badge {
-    font-size: 14px;
-    padding: 6px 10px;
-}
+        .pagination .page-link {
+            border: none;
+            color: #6c757d;
+            margin: 0 2px;
+            border-radius: 50%;
+            width: 35px;
+            height: 35px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
 
-.stock-alto {
-    background: #28a745;
-}
+        .pagination .active .page-link {
+            background-color: #0d6efd;
+            color: white;
+            box-shadow: 0 3px 6px rgba(13, 110, 253, 0.3);
+        }
 
-.stock-medio {
-    background: #ffc107;
-    color: black;
-}
+        /* --- BOTONES DE ACCIÓN --- */
+        .btn-action {
+            width: 32px;
+            height: 32px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 8px;
+            transition: all 0.2s;
+            border: 1px solid transparent;
+        }
 
-.stock-bajo {
-    background: #dc3545;
-}
-body {
+        .btn-action:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+
+        .btn-edit {
+            background-color: #fff3cd;
+            color: #ffc107;
+            border-color: #ffeeba;
+        }
+
+        .btn-edit:hover {
+            background-color: #ffc107;
+            color: #000;
+        }
+
+        .btn-delete {
+            background-color: #f8d7da;
+            color: #dc3545;
+            border-color: #f5c6cb;
+        }
+
+        .btn-delete:hover {
+            background-color: #dc3545;
+            color: #fff;
+        }
+
+        body {
             background-color: #f8f9fa;
             font-family: 'Segoe UI', sans-serif;
         }
