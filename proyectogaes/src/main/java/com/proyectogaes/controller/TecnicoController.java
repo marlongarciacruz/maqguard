@@ -4,7 +4,6 @@ import com.proyectogaes.entity.Inventario;
 import com.proyectogaes.entity.Mantenimiento;
 import com.proyectogaes.repository.UsuarioRepository;
 import com.proyectogaes.service.MantenimientoService;
-import jakarta.servlet.http.HttpSession;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;

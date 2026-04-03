@@ -1,182 +1,316 @@
 <!DOCTYPE html>
 <html lang="es" xmlns:th="http://www.thymeleaf.org">
+
 <head>
-    <meta charset="UTF-8"/>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Iniciar Mantenimiento - MaqGuard</title>
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"/>
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css"/>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" />
+    <link rel="stylesheet" th:href="@{/css/dasboardtecnico.css}" />
 </head>
+
 <body>
+    <nav class="navbar navbar-expand-lg navbar-dark shadow-sm py-3"
+        style="background-color:#4B4F54; border-bottom:3px solid #f97316;">
+        <div class="container">
+            <a class="navbar-brand d-flex align-items-center me-5" th:href="@{/inicio}">
+                <div class="bg-white rounded-circle p-1 me-2 d-flex align-items-center justify-content-center"
+                    style="width: 45px; height: 45px;">
+                    <img th:src="@{/assets/maqguard-icon.png}" width="32" height="32" alt="Logo">
+                </div>
+                <div>
+                    <span class="d-block fw-bold text-white lh-1" style="letter-spacing: 1px;">MAQGUARD</span>
+                    <span class="d-block text-info small fw-bold"
+                        style="font-size: 0.65rem; letter-spacing: 2px;">TÉCNICO</span>
+                </div>
+            </a>
 
-<div class="container my-5">
-    <div class="card shadow-lg border-0 rounded-4">
+            <button class="navbar-toggler border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
 
-        <div class="card-header bg-success text-white py-3 rounded-top-4">
-            <h4 class="mb-0">
-                <i class="bi bi-play-circle-fill me-2"></i>Ejecución de Mantenimiento Asignado
-            </h4>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav me-auto mb-2 mb-lg-0 navbar-hover gap-2">
+                    <li class="nav-item">
+                        <a class="nav-link active" th:href="@{/inicio}"><i class="bi bi-house-door-fill me-1"></i>
+                            Bienvenido</a>
+                    </li>
+                    <li class="nav-item">
+                        <!-- CORREGIDO: /mismantenimientos → /tecnico/mismantenimientos -->
+                        <a class="nav-link text-white-50" th:href="@{/tecnico/mismantenimientos}"><i
+                                class="bi bi-tools me-1"></i> Mis Mantenimientos</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link text-white-50" th:href="@{/falla}"><i
+                                class="bi bi-exclamation-triangle-fill me-1"></i> Reportar Falla</a>
+                    </li>
+                    <li class="nav-item">
+                        <!-- CORREGIDO: /historial → /tecnico/historial -->
+                        <a class="nav-link text-white-50" th:href="@{/tecnico/historial}"><i
+                                class="bi bi-clock-history me-1"></i> Historial</a>
+                    </li>
+                </ul>
+
+                <ul class="navbar-nav align-items-center gap-3">
+                    <li class="nav-item dropdown">
+                        <a class="nav-link text-white position-relative" href="#" id="notiDropdown"
+                            data-bs-toggle="dropdown">
+                            <div class="bg-light bg-opacity-10 rounded-circle p-2 d-flex align-items-center justify-content-center"
+                                style="width: 40px; height: 40px;">
+                                <i class="bi bi-bell-fill fs-5"></i>
+                            </div>
+                            <span th:if="${totalNoLeidas > 0}"
+                                class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger border border-dark badge-pulse"
+                                th:text="${totalNoLeidas}">0</span>
+                        </a>
+                        <ul
+                            class="dropdown-menu dropdown-menu-end shadow-lg rounded-4 notification-dropdown animate__animated animate__fadeIn">
+                            <li class="px-3 py-2 border-bottom">
+                                <h6 class="fw-bold mb-0 text-dark">Notificaciones</h6>
+                            </li>
+                            <li th:if="${#lists.isEmpty(notificacionesNav)}" class="text-center py-4">
+                                <small class="text-muted">Sin notificaciones nuevas</small>
+                            </li>
+                            <li th:each="noti : ${notificacionesNav}">
+                                <a class="dropdown-item d-flex align-items-start gap-3 py-3 notification-item"
+                                    th:classappend="${!noti.leida ? 'unread' : ''}" href="#">
+                                    <div class="noti-icon-circle bg-primary text-white shadow-sm">
+                                        <i class="bi bi-info-circle"></i>
+                                    </div>
+                                    <div class="w-100">
+                                        <div class="d-flex justify-content-between">
+                                            <strong class="text-dark small" th:text="${noti.titulo}">Título</strong>
+                                            <small class="text-muted" style="font-size: 0.65rem;"
+                                                th:text="${#temporals.format(noti.fechaCreacion, 'dd/MM HH:mm')}">Fecha</small>
+                                        </div>
+                                        <p class="mb-0 text-secondary small lh-sm" th:text="${noti.mensaje}">Mensaje...
+                                        </p>
+                                    </div>
+                                </a>
+                            </li>
+                        </ul>
+                    </li>
+
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle d-flex align-items-center gap-2 text-white" href="#"
+                            data-bs-toggle="dropdown">
+                            <img th:src="@{/assets/avatar_default.png}" width="38" height="38"
+                                class="rounded-circle border border-2 border-info shadow-sm">
+                            <span class="d-none d-lg-block fw-bold" style="font-size: 0.85rem;">Mi Cuenta</span>
+                        </a>
+                        <ul class="dropdown-menu dropdown-menu-end shadow-lg rounded-4 p-2">
+                            <li><a class="dropdown-item rounded-3" href="#"><i
+                                        class="bi bi-person-badge me-2 text-info"></i> Perfil</a></li>
+                            <li>
+                                <hr class="dropdown-divider">
+                            </li>
+                            <li>
+                                <form th:action="@{/logout}" method="post">
+                                    <button type="submit" class="dropdown-item rounded-3 text-danger fw-semibold">
+                                        <i class="bi bi-box-arrow-right me-2"></i> Cerrar sesión
+                                    </button>
+                                </form>
+                            </li>
+                        </ul>
+                    </li>
+                </ul>
+            </div>
         </div>
+    </nav>
 
-        <div class="card-body bg-light p-4">
 
-            <!-- Ahora usamos m.maquina.nombre en vez de m.nombreMaquina -->
-            <h5 class="card-title text-success mb-4 border-bottom pb-2">
-                Máquina: <span th:text="${mantenimiento.maquina.nombre}">Nombre</span>
-                (Modelo: <span th:text="${mantenimiento.maquina.modelo}">Modelo</span>)
-            </h5>
 
-            <!-- Ahora usamos m.id_mantenimiento en vez de m.idMantenimiento -->
-            <form th:action="@{/tecnico/mismantenimientos/{id}/finalizar(id=${mantenimiento.id_mantenimiento})}"
-                  method="post">
+    <div class="container my-5">
+        <div class="card shadow-lg border-0 rounded-4">
 
-                <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
+            <div class="card-header bg-success text-white py-3 rounded-top-4">
+                <h4 class="mb-0">
+                    <i class="bi bi-play-circle-fill me-2"></i>Ejecución de Mantenimiento Asignado
+                </h4>
+            </div>
 
-                <h6 class="card-title text-primary mb-3 mt-4">Detalle del Trabajo Realizado</h6>
+            <div class="card-body bg-light p-4">
 
-                <div class="mb-4">
-                    <label for="descripcion_trabajo" class="form-label fw-semibold">
-                        Descripción Detallada <span class="text-danger">*</span>
-                    </label>
-                    <textarea class="form-control rounded-3 shadow-sm"
-                              id="descripcion_trabajo"
-                              name="descripcion_trabajo"
-                              rows="6" required
-                              placeholder="Escriba los pasos, ajustes, componentes reemplazados, y el estado final de la máquina."></textarea>
-                </div>
+                <!-- Ahora usamos m.maquina.nombre en vez de m.nombreMaquina -->
+                <h5 class="card-title text-success mb-4 border-bottom pb-2">
+                    Máquina: <span th:text="${mantenimiento.maquina.nombre}">Nombre</span>
+                    (Modelo: <span th:text="${mantenimiento.maquina.modelo}">Modelo</span>)
+                </h5>
 
-                <h6 class="card-title text-primary mb-3 mt-4 border-bottom pb-2">
-                    Actualización del Ciclo (Para la Máquina)
-                </h6>
+                <!-- Ahora usamos m.id_mantenimiento en vez de m.idMantenimiento -->
+                <form th:action="@{/tecnico/mismantenimientos/{id}/finalizar(id=${mantenimiento.id_mantenimiento})}"
+                    method="post">
 
-                <div class="row mb-4">
-                    <div class="col-md-6">
-                        <label for="fecha_ultimo_mantenimiento" class="form-label fw-semibold">
-                            Nueva Fecha de Último Mantenimiento <span class="text-danger">*</span>
+                    <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
+
+                    <h6 class="card-title text-primary mb-3 mt-4">Detalle del Trabajo Realizado</h6>
+
+                    <div class="mb-4">
+                        <label for="descripcion_trabajo" class="form-label fw-semibold">
+                            Descripción Detallada <span class="text-danger">*</span>
                         </label>
-                        <input type="date"
-                               class="form-control rounded-3 shadow-sm"
-                               id="fecha_ultimo_mantenimiento"
-                               name="fecha_ultimo_mantenimiento"
-                               th:value="${#dates.format(#dates.createNow(), 'yyyy-MM-dd')}"
-                               required/>
+                        <textarea class="form-control rounded-3 shadow-sm" id="descripcion_trabajo"
+                            name="descripcion_trabajo" rows="6" required
+                            placeholder="Escriba los pasos, ajustes, componentes reemplazados, y el estado final de la máquina."></textarea>
                     </div>
 
-                    <!-- Ahora usamos mantenimiento.maquina.intervaloMantenimiento -->
-                    <div class="col-md-6">
-                        <label for="intervalo_mantenimiento" class="form-label fw-semibold">
-                            Nuevo Intervalo de Mantenimiento (Días)
-                        </label>
-                        <input type="number"
-                               class="form-control rounded-3 shadow-sm"
-                               id="intervalo_mantenimiento"
-                               name="intervalo_mantenimiento"
-                               th:value="${mantenimiento.maquina.intervaloMantenimiento}"
-                               min="1" required/>
-                        <div class="form-text">
-                            Valor actual:
-                            <span th:text="${mantenimiento.maquina.intervaloMantenimiento}">30</span> días.
+                    <h6 class="card-title text-primary mb-3 mt-4 border-bottom pb-2">
+                        Actualización del Ciclo (Para la Máquina)
+                    </h6>
+
+                    <div class="row mb-4">
+                        <div class="col-md-6">
+                            <label for="fecha_ultimo_mantenimiento" class="form-label fw-semibold">
+                                Nueva Fecha de Último Mantenimiento <span class="text-danger">*</span>
+                            </label>
+                            <input type="date" class="form-control rounded-3 shadow-sm" id="fecha_ultimo_mantenimiento"
+                                name="fecha_ultimo_mantenimiento"
+                                th:value="${#dates.format(#dates.createNow(), 'yyyy-MM-dd')}" required />
+                        </div>
+
+                        <!-- Ahora usamos mantenimiento.maquina.intervaloMantenimiento -->
+                        <div class="col-md-6">
+                            <label for="intervalo_mantenimiento" class="form-label fw-semibold">
+                                Nuevo Intervalo de Mantenimiento (Días)
+                            </label>
+                            <input type="number" class="form-control rounded-3 shadow-sm" id="intervalo_mantenimiento"
+                                name="intervalo_mantenimiento"
+                                th:value="${mantenimiento.maquina.intervaloMantenimiento}" min="1" required />
+                            <div class="form-text">
+                                Valor actual:
+                                <span th:text="${mantenimiento.maquina.intervaloMantenimiento}">30</span> días.
+                            </div>
                         </div>
                     </div>
-                </div>
 
-                <button type="button" class="btn btn-primary"
-                        data-bs-toggle="modal" data-bs-target="#modalRepuestos">
-                    Seleccionar Repuestos Usados
-                </button>
-
-                <div class="modal fade" id="modalRepuestos" tabindex="-1" aria-hidden="true">
-                    <div class="modal-dialog modal-lg modal-dialog-scrollable">
-                        <div class="modal-content shadow-lg border-0 rounded-4">
-
-                            <div class="modal-header bg-primary text-white rounded-top-4">
-                                <h5 class="modal-title fw-bold">Repuestos Usados</h5>
-                                <button type="button" class="btn-close btn-close-white"
-                                        data-bs-dismiss="modal"></button>
-                            </div>
-
-                            <div class="modal-body">
-                                <input type="text" id="buscadorRepuestos"
-                                       class="form-control mb-3 rounded-pill px-3"
-                                       placeholder="🔍 Buscar repuesto..."/>
-
-                                <table class="table table-hover align-middle text-center">
-                                    <thead class="table-primary">
-                                        <tr>
-                                            <th>Seleccionar</th>
-                                            <th>Repuesto</th>
-                                            <th>Disponible</th>
-                                            <th>Cantidad usada</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody id="tablaRepuestos">
-                                        <tr th:each="r : ${repuestos}">
-                                            <td>
-                                                <input type="checkbox"
-                                                       class="form-check-input seleccionar-repuesto"
-                                                       th:data-id="${r.id_repuesto}"/>
-                                            </td>
-                                            <td class="fw-semibold" th:text="${r.nombre}">Repuesto</td>
-                                            <td th:text="${r.cantidad}">0</td>
-                                            <td>
-                                                <input type="number"
-                                                       th:name="'repuestos[' + ${r.id_repuesto} + ']'"
-                                                       class="form-control text-center cantidad-input"
-                                                       value="0" min="0"
-                                                       th:max="${r.cantidad}"
-                                                       disabled/>
-                                            </td>
-                                        </tr>
-                                    </tbody>
-                                </table>
-                            </div>
-
-                            <div class="modal-footer d-flex justify-content-between">
-                                <span class="text-muted">Seleccione los repuestos que utilizó</span>
-                                <button type="button" class="btn btn-success rounded-pill px-4"
-                                        data-bs-dismiss="modal">
-                                    Guardar selección
-                                </button>
-                            </div>
-
-                        </div>
-                    </div>
-                </div>
-
-                <div class="d-grid gap-2">
-                    <button type="submit"
-                            class="btn btn-success btn-lg rounded-pill shadow-lg mt-3"
-                            onclick="return confirm('¿Confirma que desea finalizar esta tarea?');">
-                        <i class="bi bi-check-circle-fill me-2"></i> Terminar Mantenimiento
+                    <button type="button" class="btn btn-primary" data-bs-toggle="modal"
+                        data-bs-target="#modalRepuestos">
+                        Seleccionar Repuestos Usados
                     </button>
-                </div>
 
-            </form>
+                    <div class="modal fade" id="modalRepuestos" tabindex="-1" aria-hidden="true">
+                        <div class="modal-dialog modal-lg modal-dialog-scrollable">
+                            <div class="modal-content shadow-lg border-0 rounded-4">
+
+                                <div class="modal-header bg-primary text-white rounded-top-4">
+                                    <h5 class="modal-title fw-bold">Repuestos Usados</h5>
+                                    <button type="button" class="btn-close btn-close-white"
+                                        data-bs-dismiss="modal"></button>
+                                </div>
+
+                                <div class="modal-body">
+                                    <input type="text" id="buscadorRepuestos"
+                                        class="form-control mb-3 rounded-pill px-3"
+                                        placeholder="🔍 Buscar repuesto..." />
+
+                                    <table class="table table-hover align-middle text-center">
+                                        <thead class="table-primary">
+                                            <tr>
+                                                <th>Seleccionar</th>
+                                                <th>Repuesto</th>
+                                                <th>Disponible</th>
+                                                <th>Cantidad usada</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="tablaRepuestos">
+                                            <tr th:each="r : ${repuestos}">
+                                                <td>
+                                                    <input type="checkbox" class="form-check-input seleccionar-repuesto"
+                                                        th:data-id="${r.id_repuesto}" />
+                                                </td>
+                                                <td class="fw-semibold" th:text="${r.nombre}">Repuesto</td>
+                                                <td th:text="${r.cantidad}">0</td>
+                                                <td>
+                                                    <input type="number" th:name="'repuestos[' + ${r.id_repuesto} + ']'"
+                                                        class="form-control text-center cantidad-input" value="0"
+                                                        min="0" th:max="${r.cantidad}" disabled />
+                                                </td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+
+                                <div class="modal-footer d-flex justify-content-between">
+                                    <span class="text-muted">Seleccione los repuestos que utilizó</span>
+                                    <button type="button" class="btn btn-success rounded-pill px-4"
+                                        data-bs-dismiss="modal">
+                                        Guardar selección
+                                    </button>
+                                </div>
+
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="d-grid gap-2">
+                        <button type="submit" class="btn btn-success btn-lg rounded-pill shadow-lg mt-3"
+                            onclick="return confirm('¿Confirma que desea finalizar esta tarea?');">
+                            <i class="bi bi-check-circle-fill me-2"></i> Terminar Mantenimiento
+                        </button>
+                    </div>
+
+                </form>
+            </div>
         </div>
     </div>
-</div>
 
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-<script>
-    document.getElementById("buscadorRepuestos").addEventListener("keyup", function () {
-        let filtro = this.value.toLowerCase();
-        document.querySelectorAll("#tablaRepuestos tr").forEach(fila => {
-            fila.style.display = fila.textContent.toLowerCase().includes(filtro) ? "" : "none";
+    <footer class="mt-auto pt-5 pb-4" style="background-color:#4B4F54; border-top:3px solid #f97316;">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-4 mb-4">
+                    <h5 class="text-white fw-bold mb-3"><i
+                            class="bi bi-gear-wide-connected me-2 text-primary"></i>MaqGuard</h5>
+                    <p class="text-white-50 small">Gestión integral de mantenimiento industrial en tiempo real.</p>
+                </div>
+                <div class="col-md-2 mb-4">
+                    <h6 class="text-info fw-bold mb-3 small text-uppercase">Navegación</h6>
+                    <ul class="list-unstyled small">
+                        <!-- CORREGIDO: /mismantenimientos → /tecnico/mismantenimientos -->
+                        <li class="mb-2"><a th:href="@{/tecnico/mismantenimientos}"
+                                class="text-white-50 text-decoration-none hover-link">Tareas</a></li>
+                        <li class="mb-2"><a th:href="@{/falla}"
+                                class="text-white-50 text-decoration-none hover-link">Reportar</a></li>
+                    </ul>
+                </div>
+                <div class="col-md-3 mb-4">
+                    <h6 class="text-info fw-bold mb-3 small text-uppercase">Soporte</h6>
+                    <p class="text-white-50 small mb-0">admin@maqguard.com</p>
+                    <p class="text-white-50 small">+57 601 555 0123</p>
+                </div>
+            </div>
+            <hr class="border-secondary opacity-25">
+            <div class="d-flex justify-content-between align-items-center">
+                <p class="small text-white-50 mb-0">© 2026 <strong>MaqGuard System</strong>.</p>
+                <div class="d-flex gap-3">
+                    <a href="#" class="text-secondary hover-icon"><i class="bi bi-linkedin fs-5"></i></a>
+                    <a href="#" class="text-secondary hover-icon"><i class="bi bi-github fs-5"></i></a>
+                </div>
+            </div>
+        </div>
+    </footer>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        document.getElementById("buscadorRepuestos").addEventListener("keyup", function () {
+            let filtro = this.value.toLowerCase();
+            document.querySelectorAll("#tablaRepuestos tr").forEach(fila => {
+                fila.style.display = fila.textContent.toLowerCase().includes(filtro) ? "" : "none";
+            });
         });
-    });
 
-    document.querySelectorAll(".seleccionar-repuesto").forEach(chk => {
-        chk.addEventListener("change", function () {
-            let input = this.closest("tr").querySelector(".cantidad-input");
-            if (this.checked) {
-                input.disabled = false;
-                input.value = 1;
-            } else {
-                input.disabled = true;
-                input.value = 0;
-            }
+        document.querySelectorAll(".seleccionar-repuesto").forEach(chk => {
+            chk.addEventListener("change", function () {
+                let input = this.closest("tr").querySelector(".cantidad-input");
+                if (this.checked) {
+                    input.disabled = false;
+                    input.value = 1;
+                } else {
+                    input.disabled = true;
+                    input.value = 0;
+                }
+            });
         });
-    });
-</script>
+    </script>
 </body>
+
 </html>
