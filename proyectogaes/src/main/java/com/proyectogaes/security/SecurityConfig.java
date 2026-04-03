@@ -17,16 +17,16 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
-            .csrf(csrf -> csrf.disable()) // Desactiva CSRF temporalmente para probar
             .authorizeHttpRequests(auth -> auth
                 .requestMatchers("/", "/login", "/css/**", "/js/**", "/assets/**", "/favicon.ico").permitAll()
-                .requestMatchers("/notificaciones/**").authenticated() // IMPORTANTE: doble asterisco **
+                .requestMatchers("/notificaciones/**").authenticated()
+                .requestMatchers("/admin/**").hasAnyAuthority("ROLE_ADMINISTRADOR")
+                .requestMatchers("/tecnico/**").hasAnyAuthority("ROLE_TECNICO")
                 .anyRequest().authenticated()
             )
             .formLogin(form -> form
                 .loginPage("/login")
-                .successHandler(loginSuccessHandler)
-                .defaultSuccessUrl("/inicio", true)
+                .successHandler(loginSuccessHandler) // El Handler se encarga de la redirección
                 .permitAll()
             )
             .logout(logout -> logout
