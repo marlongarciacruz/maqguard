@@ -1,0 +1,301 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <title>MaqGuard - Editar Reporte</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
+</head>
+
+<body class="bg-light">
+
+    <nav class="navbar navbar-expand-lg navbar-dark shadow-sm py-3"
+        style="background-color:#4B4F54; border-bottom:3px solid #f97316;">
+        <div class="container">
+            <a class="navbar-brand d-flex align-items-center me-5" th:href="@{/inicio}">
+                <div class="bg-white rounded-circle p-1 me-2 d-flex align-items-center justify-content-center"
+                    style="width: 45px; height: 45px;">
+                    <img th:src="@{/assets/maqguard-icon.png}" width="32" height="32" alt="Logo">
+                </div>
+                <div>
+                    <span class="d-block fw-bold text-white lh-1" style="letter-spacing: 1px;">MAQGUARD</span>
+                    <span class="d-block text-info small fw-bold"
+                        style="font-size: 0.65rem; letter-spacing: 2px;">TÉCNICO</span>
+                </div>
+            </a>
+
+            <button class="navbar-toggler border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav me-auto mb-2 mb-lg-0 navbar-hover gap-2">
+                    <li class="nav-item">
+                        <a class="nav-link active" th:href="@{/inicio}"><i class="bi bi-house-door-fill me-1"></i>
+                            Bienvenido</a>
+                    </li>
+                    <li class="nav-item">
+                        <!-- CORREGIDO: /mismantenimientos → /tecnico/mismantenimientos -->
+                        <a class="nav-link text-white-50" th:href="@{/tecnico/mismantenimientos}"><i
+                                class="bi bi-tools me-1"></i> Mis Mantenimientos</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link text-white-50" th:href="@{/falla}"><i
+                                class="bi bi-exclamation-triangle-fill me-1"></i> Reportar Falla</a>
+                    </li>
+                    <li class="nav-item">
+                        <!-- CORREGIDO: /historial → /tecnico/historial -->
+                        <a class="nav-link text-white-50" th:href="@{/tecnico/historial}"><i
+                                class="bi bi-clock-history me-1"></i> Historial</a>
+                    </li>
+                </ul>
+
+                <ul class="navbar-nav align-items-center gap-3">
+                    <li class="nav-item dropdown">
+                        <a class="nav-link text-white position-relative" href="#" id="notiDropdown"
+                            data-bs-toggle="dropdown">
+                            <div class="bg-light bg-opacity-10 rounded-circle p-2 d-flex align-items-center justify-content-center"
+                                style="width: 40px; height: 40px;">
+                                <i class="bi bi-bell-fill fs-5"></i>
+                            </div>
+                            <span th:if="${totalNoLeidas > 0}"
+                                class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger border border-dark badge-pulse"
+                                th:text="${totalNoLeidas}">0</span>
+                        </a>
+                        <ul
+                            class="dropdown-menu dropdown-menu-end shadow-lg rounded-4 notification-dropdown animate__animated animate__fadeIn">
+                            <li class="px-3 py-2 border-bottom">
+                                <h6 class="fw-bold mb-0 text-dark">Notificaciones</h6>
+                            </li>
+                            <li th:if="${#lists.isEmpty(notificacionesNav)}" class="text-center py-4">
+                                <small class="text-muted">Sin notificaciones nuevas</small>
+                            </li>
+                            <li th:each="noti : ${notificacionesNav}">
+                                <a class="dropdown-item d-flex align-items-start gap-3 py-3 notification-item"
+                                    th:classappend="${!noti.leida ? 'unread' : ''}" href="#">
+                                    <div class="noti-icon-circle bg-primary text-white shadow-sm">
+                                        <i class="bi bi-info-circle"></i>
+                                    </div>
+                                    <div class="w-100">
+                                        <div class="d-flex justify-content-between">
+                                            <strong class="text-dark small" th:text="${noti.titulo}">Título</strong>
+                                            <small class="text-muted" style="font-size: 0.65rem;"
+                                                th:text="${#temporals.format(noti.fechaCreacion, 'dd/MM HH:mm')}">Fecha</small>
+                                        </div>
+                                        <p class="mb-0 text-secondary small lh-sm" th:text="${noti.mensaje}">Mensaje...
+                                        </p>
+                                    </div>
+                                </a>
+                            </li>
+                        </ul>
+                    </li>
+
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle d-flex align-items-center gap-2 text-white" href="#"
+                            data-bs-toggle="dropdown">
+                            <img th:src="@{/assets/avatar_default.png}" width="38" height="38"
+                                class="rounded-circle border border-2 border-info shadow-sm">
+                            <span class="d-none d-lg-block fw-bold" style="font-size: 0.85rem;">Mi Cuenta</span>
+                        </a>
+                        <ul class="dropdown-menu dropdown-menu-end shadow-lg rounded-4 p-2">
+                            <li><a class="dropdown-item rounded-3" href="#"><i
+                                        class="bi bi-person-badge me-2 text-info"></i> Perfil</a></li>
+                            <li>
+                                <hr class="dropdown-divider">
+                            </li>
+                            <li>
+                                <form th:action="@{/logout}" method="post">
+                                    <button type="submit" class="dropdown-item rounded-3 text-danger fw-semibold">
+                                        <i class="bi bi-box-arrow-right me-2"></i> Cerrar sesión
+                                    </button>
+                                </form>
+                            </li>
+                        </ul>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+    <div class="container my-5">
+
+        <nav aria-label="breadcrumb" class="mb-4">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a th:href="@{/falla}"
+                        class="text-decoration-none text-secondary">Listado</a></li>
+                <li class="breadcrumb-item active" aria-current="page"
+                    th:text="'Editar Reporte #' + ${reporte.idFalla}"></li>
+            </ol>
+        </nav>
+
+        <div class="row justify-content-center">
+            <div class="col-lg-10">
+
+                <div class="card shadow-lg border-0 rounded-4 overflow-hidden">
+
+                    <div class="card-header bg-white py-4 px-5 border-bottom">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <div>
+                                <h6 class="text-uppercase text-warning fw-bold mb-1"
+                                    style="font-size: 0.75rem; letter-spacing: 1px;">
+                                    <i class="bi bi-pencil-square me-1"></i> Modo Edición
+                                </h6>
+                                <h3 class="fw-bold text-dark mb-0">Actualizar Incidencia</h3>
+                            </div>
+                            <div class="text-end">
+                                <span class="badge bg-light text-secondary border px-3 py-2 rounded-pill font-monospace"
+                                    th:text="'ID: ' + ${reporte.idFalla}">
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card-body p-5 bg-light">
+                        <form th:action="@{/falla/actualizar/{id}(id=${reporte.idFalla})}" th:object="${reporte}"
+                            method="post" class="needs-validation" novalidate>
+
+                            <input type="hidden" th:field="*{idFalla}">
+                            <input type="hidden" th:field="*{idUsuario}">
+                            <input type="hidden" th:field="*{idMaquina}">
+
+                            <div class="card border-0 shadow-sm rounded-4 mb-4">
+                                <div class="card-body p-4">
+                                    <h6 class="fw-bold text-secondary mb-3 border-bottom pb-2">Información General</h6>
+
+                                    <div class="mb-4">
+                                        <label for="titulo" class="form-label fw-semibold text-dark">Título del
+                                            Reporte</label>
+                                        <div class="input-group">
+                                            <span class="input-group-text bg-white border-end-0 text-muted"><i
+                                                    class="bi bi-type-h1"></i></span>
+                                            <input type="text" th:field="*{titulo}" id="titulo"
+                                                class="form-control form-control-lg border-start-0 ps-0 shadow-none"
+                                                placeholder="Ej: Falla en motor de arranque..." required>
+                                        </div>
+                                        <div class="invalid-feedback">El título es obligatorio.</div>
+                                    </div>
+
+                                    <div class="row g-4">
+                                        <div class="col-md-6">
+                                            <label for="prioridad" class="form-label fw-semibold text-dark">Nivel de
+                                                Prioridad</label>
+                                            <div class="input-group">
+                                                <span class="input-group-text bg-white border-end-0 text-muted"><i
+                                                        class="bi bi-flag"></i></span>
+                                                <select th:field="*{prioridad}" id="prioridad"
+                                                    class="form-select border-start-0 shadow-none" required>
+                                                    <option value="baja">🟢 Baja</option>
+                                                    <option value="media">🟡 Media</option>
+                                                    <option value="alta">🟠 Alta</option>
+                                                    <option value="urgente">🔴 Urgente</option>
+                                                </select>
+                                            </div>
+                                        </div>
+
+                                        <div class="col-md-6">
+                                            <label for="estado" class="form-label fw-semibold text-dark">Estado
+                                                Actual</label>
+                                            <div class="input-group">
+                                                <span class="input-group-text bg-white border-end-0 text-muted"><i
+                                                        class="bi bi-stoplights"></i></span>
+                                                <select th:field="*{estado}" id="estado"
+                                                    class="form-select border-start-0 shadow-none" required>
+                                                    <option value="pendiente">⏳ Pendiente</option>
+                                                    <option value="en_progreso">🔧 En Progreso</option>
+                                                    <option value="resuelto">✅ Resuelto</option>
+                                                    <option value="cancelado">🚫 Cancelado</option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="card border-0 shadow-sm rounded-4 mb-4">
+                                <div class="card-body p-4">
+                                    <h6 class="fw-bold text-secondary mb-3 border-bottom pb-2">Descripción Técnica</h6>
+                                    <div class="mb-2">
+                                        <label for="descripcionFalla" class="form-label fw-semibold text-dark">Detalle
+                                            de la Falla</label>
+                                        <textarea th:field="*{descripcionFalla}" id="descripcionFalla"
+                                            class="form-control shadow-none" rows="6"
+                                            placeholder="Describa detalladamente qué sucedió..." required></textarea>
+                                        <div class="form-text text-muted">
+                                            <i class="bi bi-info-circle me-1"></i> Sea lo más específico posible para
+                                            agilizar la reparación.
+                                        </div>
+                                        <div class="invalid-feedback">La descripción es necesaria.</div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="d-flex justify-content-between align-items-center pt-3">
+                                <a th:href="@{/falla}" class="btn btn-link text-decoration-none text-secondary px-0">
+                                    <i class="bi bi-arrow-left me-1"></i> Cancelar y volver
+                                </a>
+                                <button type="submit"
+                                    class="btn btn-warning px-5 rounded-pill shadow fw-bold text-dark">
+                                    <i class="bi bi-save me-2"></i>Guardar Cambios
+                                </button>
+                            </div>
+
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Validación de Bootstrap 5
+        (() => {
+            'use strict'
+            const forms = document.querySelectorAll('.needs-validation')
+            Array.from(forms).forEach(form => {
+                form.addEventListener('submit', event => {
+                    if (!form.checkValidity()) {
+                        event.preventDefault()
+                        event.stopPropagation()
+                    }
+                    form.classList.add('was-validated')
+                }, false)
+            })
+        })()
+    </script>
+    <footer class="mt-auto pt-5 pb-4" style="background-color:#4B4F54; border-top:3px solid #f97316;">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-4 mb-4">
+                    <h5 class="text-white fw-bold mb-3"><i
+                            class="bi bi-gear-wide-connected me-2 text-primary"></i>MaqGuard</h5>
+                    <p class="text-white-50 small">Gestión integral de mantenimiento industrial en tiempo real.</p>
+                </div>
+                <div class="col-md-2 mb-4">
+                    <h6 class="text-info fw-bold mb-3 small text-uppercase">Navegación</h6>
+                    <ul class="list-unstyled small">
+                        <!-- CORREGIDO: /mismantenimientos → /tecnico/mismantenimientos -->
+                        <li class="mb-2"><a th:href="@{/tecnico/mismantenimientos}"
+                                class="text-white-50 text-decoration-none hover-link">Tareas</a></li>
+                        <li class="mb-2"><a th:href="@{/falla}"
+                                class="text-white-50 text-decoration-none hover-link">Reportar</a></li>
+                    </ul>
+                </div>
+                <div class="col-md-3 mb-4">
+                    <h6 class="text-info fw-bold mb-3 small text-uppercase">Soporte</h6>
+                    <p class="text-white-50 small mb-0">admin@maqguard.com</p>
+                    <p class="text-white-50 small">+57 601 555 0123</p>
+                </div>
+            </div>
+            <hr class="border-secondary opacity-25">
+            <div class="d-flex justify-content-between align-items-center">
+                <p class="small text-white-50 mb-0">© 2026 <strong>MaqGuard System</strong>.</p>
+                <div class="d-flex gap-3">
+                    <a href="#" class="text-secondary hover-icon"><i class="bi bi-linkedin fs-5"></i></a>
+                    <a href="#" class="text-secondary hover-icon"><i class="bi bi-github fs-5"></i></a>
+                </div>
+            </div>
+        </div>
+    </footer>
+</body>
+
+</html>
