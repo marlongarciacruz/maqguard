@@ -1,11 +1,13 @@
 package com.proyectogaes.controller;
 
+import java.util.ArrayList;
+
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+
 import jakarta.servlet.http.HttpServletResponse;
-import java.util.ArrayList;
 
 @Controller
 public class InicioController {
