@@ -10,12 +10,20 @@
 </head>
 
 <body>
-    <nav class="navbar navbar-expand-lg navbar-dark fixed-top shadow-sm" style="background-color: #0d1b2a;">
+    <nav class="navbar navbar-expand-lg navbar-dark fixed-top shadow-sm"
+        style="background-color:  #4B4F54;border-top:3px solid #f97316;">
         <div class="container">
-            <a class="navbar-brand fw-bold" th:href="@{/}">
-                MAQGUARD
-            </a>
+            <a class="navbar-brand d-flex align-items-center me-5" th:href="@{/}">
+                <div class="bg-white rounded-circle p-1 me-2 d-flex align-items-center justify-content-center"
+                    style="width: 40px; height: 40px;">
+                    <img th:src="@{/assets/maqguard-icon.png}" width="28" height="28" alt="Logo MaqGuard">
+                </div>
 
+                <div class="lh-1">
+                    <span class="d-block fw-bold text-white" style="letter-spacing: 1px;">MAQGUARD</span>
+                    <span class="d-block text-white-50" style="font-size: 0.65rem;">SOLUCIONES INDUSTRIALES</span>
+                </div>
+            </a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#nav">
                 <span class="navbar-toggler-icon"></span>
             </button>
@@ -196,7 +204,7 @@
                 </div>
             </div>
         </div>
-        <footer class="py-5 mt-5 text-light" style="background-color: #0d1b2a;">
+        <footer class="py-5 mt-5 text-light" style="background-color: #4B4F54;border-top:3px solid #f97316;">
             <div class="container">
                 <div class="row">
                     <div class="col-6 col-md-3 mb-3">

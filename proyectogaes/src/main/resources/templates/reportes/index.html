@@ -1,0 +1,322 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <title>MaqGuard - Gestión de Fallas</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
+
+    <style>
+        .priority-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            display: inline-block;
+            margin-right: 6px;
+        }
+
+        .table-hover tbody tr:hover {
+            background-color: #fff;
+            transform: scale(1.005);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+            z-index: 10;
+            position: relative;
+            transition: all 0.2s ease;
+        }
+
+        .btn-action {
+            width: 32px;
+            height: 32px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 8px;
+            transition: all 0.2s;
+            text-decoration: none;
+        }
+
+        .btn-action:hover {
+            transform: translateY(-2px);
+        }
+    </style>
+</head>
+
+<body class="bg-light">
+    <nav class="navbar navbar-expand-lg navbar-dark shadow-sm py-3"
+        style="background-color:#4B4F54; border-bottom:3px solid #f97316;">
+        <div class="container">
+            <a class="navbar-brand d-flex align-items-center me-5" th:href="@{/inicio}">
+                <div class="bg-white rounded-circle p-1 me-2 d-flex align-items-center justify-content-center"
+                    style="width: 45px; height: 45px;">
+                    <img th:src="@{/assets/maqguard-icon.png}" width="32" height="32" alt="Logo">
+                </div>
+                <div>
+                    <span class="d-block fw-bold text-white lh-1" style="letter-spacing: 1px;">MAQGUARD</span>
+                    <span class="d-block text-info small fw-bold"
+                        style="font-size: 0.65rem; letter-spacing: 2px;">TÉCNICO</span>
+                </div>
+            </a>
+
+            <button class="navbar-toggler border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav me-auto mb-2 mb-lg-0 navbar-hover gap-2">
+                    <li class="nav-item">
+                        <a class="nav-link active" th:href="@{/inicio}"><i class="bi bi-house-door-fill me-1"></i>
+                            Bienvenido</a>
+                    </li>
+                    <li class="nav-item">
+                        <!-- CORREGIDO: /mismantenimientos → /tecnico/mismantenimientos -->
+                        <a class="nav-link text-white-50" th:href="@{/tecnico/mismantenimientos}"><i
+                                class="bi bi-tools me-1"></i> Mis Mantenimientos</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link text-white-50" th:href="@{/falla}"><i
+                                class="bi bi-exclamation-triangle-fill me-1"></i> Reportar Falla</a>
+                    </li>
+                    <li class="nav-item">
+                        <!-- CORREGIDO: /historial → /tecnico/historial -->
+                        <a class="nav-link text-white-50" th:href="@{/tecnico/historial}"><i
+                                class="bi bi-clock-history me-1"></i> Historial</a>
+                    </li>
+                </ul>
+
+                <ul class="navbar-nav align-items-center gap-3">
+                    <li class="nav-item dropdown">
+                        <a class="nav-link text-white position-relative" href="#" id="notiDropdown"
+                            data-bs-toggle="dropdown">
+                            <div class="bg-light bg-opacity-10 rounded-circle p-2 d-flex align-items-center justify-content-center"
+                                style="width: 40px; height: 40px;">
+                                <i class="bi bi-bell-fill fs-5"></i>
+                            </div>
+                            <span th:if="${totalNoLeidas > 0}"
+                                class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger border border-dark badge-pulse"
+                                th:text="${totalNoLeidas}">0</span>
+                        </a>
+                        <ul
+                            class="dropdown-menu dropdown-menu-end shadow-lg rounded-4 notification-dropdown animate__animated animate__fadeIn">
+                            <li class="px-3 py-2 border-bottom">
+                                <h6 class="fw-bold mb-0 text-dark">Notificaciones</h6>
+                            </li>
+                            <li th:if="${#lists.isEmpty(notificacionesNav)}" class="text-center py-4">
+                                <small class="text-muted">Sin notificaciones nuevas</small>
+                            </li>
+                            <li th:each="noti : ${notificacionesNav}">
+                                <a class="dropdown-item d-flex align-items-start gap-3 py-3 notification-item"
+                                    th:classappend="${!noti.leida ? 'unread' : ''}" href="#">
+                                    <div class="noti-icon-circle bg-primary text-white shadow-sm">
+                                        <i class="bi bi-info-circle"></i>
+                                    </div>
+                                    <div class="w-100">
+                                        <div class="d-flex justify-content-between">
+                                            <strong class="text-dark small" th:text="${noti.titulo}">Título</strong>
+                                            <small class="text-muted" style="font-size: 0.65rem;"
+                                                th:text="${#temporals.format(noti.fechaCreacion, 'dd/MM HH:mm')}">Fecha</small>
+                                        </div>
+                                        <p class="mb-0 text-secondary small lh-sm" th:text="${noti.mensaje}">Mensaje...
+                                        </p>
+                                    </div>
+                                </a>
+                            </li>
+                        </ul>
+                    </li>
+
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle d-flex align-items-center gap-2 text-white" href="#"
+                            data-bs-toggle="dropdown">
+                            <img th:src="@{/assets/avatar_default.png}" width="38" height="38"
+                                class="rounded-circle border border-2 border-info shadow-sm">
+                            <span class="d-none d-lg-block fw-bold" style="font-size: 0.85rem;">Mi Cuenta</span>
+                        </a>
+                        <ul class="dropdown-menu dropdown-menu-end shadow-lg rounded-4 p-2">
+                            <li><a class="dropdown-item rounded-3" href="#"><i
+                                        class="bi bi-person-badge me-2 text-info"></i> Perfil</a></li>
+                            <li>
+                                <hr class="dropdown-divider">
+                            </li>
+                            <li>
+                                <form th:action="@{/logout}" method="post">
+                                    <button type="submit" class="dropdown-item rounded-3 text-danger fw-semibold">
+                                        <i class="bi bi-box-arrow-right me-2"></i> Cerrar sesión
+                                    </button>
+                                </form>
+                            </li>
+                        </ul>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+    <div class="container my-5">
+
+        <div class="d-flex justify-content-between align-items-end mb-4">
+            <div>
+                <h2 class="fw-bold text-dark mb-1">
+                    <i class="bi bi-exclamation-triangle-fill text-danger me-2"></i>Gestión de Fallas
+                </h2>
+                <p class="text-muted mb-0">Reporta y gestiona las incidencias técnicas de MaqGuard.</p>
+            </div>
+            <a th:href="@{/falla/crear}" class="btn btn-danger rounded-pill px-4 shadow-sm fw-bold">
+                <i class="bi bi-plus-lg me-2"></i>Nuevo Reporte
+            </a>
+        </div>
+
+        <div class="card shadow-lg border-0 rounded-4 overflow-visible">
+
+            <div class="card-header bg-white py-3 px-4 border-bottom">
+                <div class="input-group" style="max-width: 350px;">
+                    <span class="input-group-text bg-light border-end-0 text-muted"><i class="bi bi-search"></i></span>
+                    <input type="text" id="buscador" class="form-control bg-light border-start-0"
+                        placeholder="Buscar por título, prioridad...">
+                </div>
+            </div>
+
+            <div class="card-body p-0">
+                <div th:if="${#lists.isEmpty(reportes)}" class="text-center py-5">
+                    <div class="mb-3 opacity-25">
+                        <i class="bi bi-check-circle-fill text-success" style="font-size: 4rem;"></i>
+                    </div>
+                    <h5 class="fw-bold text-secondary">Sin fallas reportadas</h5>
+                    <p class="text-muted small">El sistema MaqGuard funciona correctamente.</p>
+                </div>
+
+                <div th:if="${not #lists.isEmpty(reportes)}" class="table-responsive" style="min-height: 250px;">
+                    <table class="table align-middle mb-0 table-hover" id="tablaFallas">
+                        <thead class="bg-light text-secondary small text-uppercase font-monospace">
+                            <tr>
+                                <th class="ps-4 py-3">Descripción de la Falla</th>
+                                <th class="py-3">Prioridad</th>
+                                <th class="py-3">Estado</th>
+                                <th class="py-3">Fecha</th>
+                                <th class="text-end pe-4 py-3">Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr th:each="reporte : ${reportes}" class="border-bottom">
+
+                                <td class="ps-4 py-3">
+                                    <div class="d-flex align-items-center">
+                                        <div class="bg-danger bg-opacity-10 text-danger p-2 rounded-3 me-3 d-flex align-items-center justify-content-center"
+                                            style="width: 40px; height: 40px;">
+                                            <i class="bi bi-wrench-adjustable-circle-fill"></i>
+                                        </div>
+                                        <div>
+                                            <h6 class="mb-0 fw-bold text-dark text-wrap" style="max-width: 300px;"
+                                                th:text="${reporte.titulo}"></h6>
+                                        </div>
+                                    </div>
+                                </td>
+
+                                <td>
+                                    <span th:with="prio=${#strings.toLowerCase(reporte.prioridad)}" th:class="'badge rounded-pill px-3 py-2 fw-normal border ' + 
+                                      (${prio} == 'baja' ? 'bg-secondary text-white' : 
+                                      (${prio} == 'media' ? 'bg-warning text-dark' : 
+                                      (${prio} == 'alta' ? 'bg-danger text-white' : 'bg-dark text-white')))"
+                                        th:text="${#strings.capitalize(prio)}">
+                                    </span>
+                                </td>
+
+                                <td>
+                                    <div th:with="est=${#strings.toLowerCase(#strings.replace(reporte.estado, '_', ''))}"
+                                        th:class="'fw-bold d-flex align-items-center ' + 
+                                     (${est} == 'pendiente' ? 'text-warning' : 
+                                     (${est} == 'enprogreso' ? 'text-primary' : 
+                                     (${est} == 'resuelto' ? 'text-success' : 'text-secondary')))">
+                                        <i class="bi bi-circle-fill me-2" style="font-size: 0.5rem;"></i>
+                                        <span th:text="${#strings.capitalize(reporte.estado)}"></span>
+                                    </div>
+                                </td>
+
+                                <td>
+                                    <div class="d-flex flex-column">
+                                        <span class="fw-medium text-dark"
+                                            th:text="${#temporals.format(reporte.fechaReporte, 'dd MMM, yyyy')}"></span>
+                                        <small class="text-muted" style="font-size: 0.75rem;"
+                                            th:text="${#temporals.format(reporte.fechaReporte, 'hh:mm a')}"></small>
+                                    </div>
+                                </td>
+
+                                <td class="text-end pe-4">
+                                    <div class="d-flex justify-content-end gap-2">
+                                        <a th:href="@{/falla/ver/{id}(id=${reporte.idFalla})}"
+                                            class="btn btn-action btn-light text-primary shadow-sm border"
+                                            title="Ver Detalles">
+                                            <i class="bi bi-eye-fill"></i>
+                                        </a>
+                                        <a th:href="@{/falla/editar/{id}(id=${reporte.idFalla})}"
+                                            class="btn btn-action btn-light text-warning shadow-sm border"
+                                            title="Editar">
+                                            <i class="bi bi-pencil-fill"></i>
+                                        </a>
+                                        <a th:href="@{/falla/eliminar/{id}(id=${reporte.idFalla})}"
+                                            class="btn btn-action btn-light text-danger shadow-sm border"
+                                            onclick="return confirm('¿Está seguro de eliminar este reporte?')"
+                                            title="Eliminar">
+                                            <i class="bi bi-trash-fill"></i>
+                                        </a>
+                                    </div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div class="card-footer bg-white border-top-0 py-3 text-center">
+                <small class="text-muted">Mostrando <span th:text="${#lists.size(reportes)}">0</span> reportes
+                    registrados</small>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Buscador en tiempo real
+        document.getElementById('buscador').addEventListener('keyup', function () {
+            let filtro = this.value.toLowerCase();
+            document.querySelectorAll('#tablaFallas tbody tr').forEach(row => {
+                let texto = row.textContent.toLowerCase();
+                row.style.display = texto.includes(filtro) ? '' : 'none';
+            });
+        });
+    </script>
+    <footer class="mt-auto pt-5 pb-4" style="background-color:#4B4F54; border-top:3px solid #f97316;">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-4 mb-4">
+                    <h5 class="text-white fw-bold mb-3"><i
+                            class="bi bi-gear-wide-connected me-2 text-primary"></i>MaqGuard</h5>
+                    <p class="text-white-50 small">Gestión integral de mantenimiento industrial en tiempo real.</p>
+                </div>
+                <div class="col-md-2 mb-4">
+                    <h6 class="text-info fw-bold mb-3 small text-uppercase">Navegación</h6>
+                    <ul class="list-unstyled small">
+                        <!-- CORREGIDO: /mismantenimientos → /tecnico/mismantenimientos -->
+                        <li class="mb-2"><a th:href="@{/tecnico/mismantenimientos}"
+                                class="text-white-50 text-decoration-none hover-link">Tareas</a></li>
+                        <li class="mb-2"><a th:href="@{/falla}"
+                                class="text-white-50 text-decoration-none hover-link">Reportar</a></li>
+                    </ul>
+                </div>
+                <div class="col-md-3 mb-4">
+                    <h6 class="text-info fw-bold mb-3 small text-uppercase">Soporte</h6>
+                    <p class="text-white-50 small mb-0">admin@maqguard.com</p>
+                    <p class="text-white-50 small">+57 601 555 0123</p>
+                </div>
+            </div>
+            <hr class="border-secondary opacity-25">
+            <div class="d-flex justify-content-between align-items-center">
+                <p class="small text-white-50 mb-0">© 2026 <strong>MaqGuard System</strong>.</p>
+                <div class="d-flex gap-3">
+                    <a href="#" class="text-secondary hover-icon"><i class="bi bi-linkedin fs-5"></i></a>
+                    <a href="#" class="text-secondary hover-icon"><i class="bi bi-github fs-5"></i></a>
+                </div>
+            </div>
+        </div>
+    </footer>
+</body>
+
+</html>

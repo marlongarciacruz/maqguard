@@ -1,7 +1,10 @@
 package com.proyectogaes.repository;
 
-import com.proyectogaes.model.ReporteFalla;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository; 
+import com.proyectogaes.entity.ReporteFalla;
 
-public interface ReporteFallaRepository extends JpaRepository<ReporteFallaRepository, Long> {
+@Repository
+public interface ReporteFallaRepository extends JpaRepository<ReporteFalla, Long> {
+    
 }
