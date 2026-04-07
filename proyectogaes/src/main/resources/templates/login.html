@@ -1,108 +1,68 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="es" xmlns:th="http://www.thymeleaf.org">
-
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Iniciar Sesión | MaqGuard</title>
-
-  <!-- Bootstrap -->
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
-  <link rel="stylesheet" th:href="@{/css/login.css}">
-
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Iniciar Sesión | MaqGuard</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+    <link rel="stylesheet" th:href="@{/css/login.css}">
 </head>
+<body class="login-bg">
 
-<body>
+    <a th:href="@{/}" class="btn-back">
+        <i class="bi bi-arrow-left"></i> Volver al inicio
+    </a>
 
-  <div class="container-fluid g-0">
-    <div class="row g-0">
-
-      <!-- IZQUIERDA -->
-      <div class="col-lg-7 d-none d-lg-block login-visual">
-        <div class="visual-overlay">
-          <h1 class="display-4 fw-bold mb-3">Control Total</h1>
-          <p class="lead opacity-75">
-            Gestión inteligente de mantenimiento industrial.
-          </p>
-        </div>
-      </div>
-
-      <!-- DERECHA -->
-      <div class="col-lg-5 login-form-container">
-
-        <!-- BOTÓN VOLVER -->
-        <a th:href="@{/}" class="btn btn-back text-decoration-none">
-          <i class="bi bi-arrow-left"></i> Volver
-        </a>
-
-        <div class="w-100 p-5" style="max-width: 450px;">
-
-          <!-- LOGO -->
-          <div class="text-center mb-4">
-            <img th:src="@{/assets/maqguard-icon.png}" width="60">
-            <h2 class="fw-bold mt-3">Iniciar Sesión</h2>
-          </div>
-
-          <!-- ERROR LOGIN -->
-          <div th:if="${param.error}" class="alert alert-danger">
-            Usuario o contraseña incorrectos
-          </div>
-
-          <!-- LOGOUT -->
-          <div th:if="${param.logout}" class="alert alert-success">
-            Sesión cerrada correctamente
-          </div>
-
-          <!-- FORMULARIO -->
-          <form th:action="@{/login}" method="post">
-            <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
-
-            <div class="form-floating mb-3">
-              <input type="text" name="username" class="form-control" placeholder="Usuario" required>
-              <label><i class="bi bi-person me-2"></i>Usuario</label>
+    <div class="login-container">
+        <div class="login-card">
+            <div class="logo-wrapper">
+                <img th:src="@{/assets/maqguard-icon.png}" alt="Logo">
             </div>
 
-            <div class="form-floating mb-4">
-              <input type="password" name="password" class="form-control" placeholder="Contraseña" required>
-              <label><i class="bi bi-lock me-2"></i>Contraseña</label>
+            <h2 class="text-center fw-bold mb-1 mt-3 text-white">MaqGuard</h2>
+            <p class="text-center text-white-50 mb-4 small">Panel de Control Industrial</p>
+
+            <div th:if="${param.error}" class="alert-custom error animate-fade">
+                Usuario o contraseña incorrectos
+            </div>
+            <div th:if="${param.logout}" class="alert-custom success animate-fade" id="logoutMsg">
+                Sesión cerrada correctamente
             </div>
 
-            <button type="submit" class="btn btn-primary w-100 btn-login">
-              <i class="bi bi-box-arrow-in-right me-2"></i>Ingresar
-            </button>
-          </form>
+            <form th:action="@{/login}" method="post">
+                <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
 
-          <!-- FOOTER -->
-          <div class="text-center mt-4">
-            <small class="text-muted">© 2025 MaqGuard</small>
-          </div>
+                <div class="input-group-custom mb-3">
+                    <i class="bi bi-person text-orange"></i>
+                    <input type="text" name="username" placeholder="Usuario" required autocomplete="off">
+                </div>
 
+                <div class="input-group-custom mb-4">
+                    <i class="bi bi-lock text-orange"></i>
+                    <input type="password" name="password" placeholder="Contraseña" required>
+                </div>
+
+                <button type="submit" class="btn-login-main">
+                    Ingresar <i class="bi bi-box-arrow-in-right ms-2"></i>
+                </button>
+            </form>
+
+            <div class="text-center mt-4">
+                <p class="text-muted mb-0" style="font-size: 0.75rem;">© 2026 MaqGuard Industrial Solutions</p>
+            </div>
         </div>
-      </div>
-
     </div>
-  </div>
 
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
-  <div th:if="${param.logout}" class="alert alert-success" id="logoutMsg">
-    Sesión cerrada correctamente
-  </div>
-
-  <script>
-    setTimeout(() => {
-      const msg = document.getElementById("logoutMsg");
-      if (msg) {
-        msg.style.transition = "opacity 0.5s";
-        msg.style.opacity = "0";
-        setTimeout(() => msg.remove(), 500);
-      }
-    }, 3000);
-    <div th:if="${param.expired}" class="alert alert-warning">
-      Tu sesión ha expirado
-    </div>
-  </script>
-
+    <script>
+        // Script para remover el mensaje de logout
+        setTimeout(() => {
+            const msg = document.getElementById("logoutMsg");
+            if (msg) {
+                msg.style.opacity = "0";
+                setTimeout(() => msg.remove(), 600);
+            }
+        }, 3000);
+    </script>
 </body>
-
 </html>
