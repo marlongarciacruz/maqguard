@@ -8,7 +8,7 @@ public class PasswordGenerator {
 
         BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
 
-        // 🔥 Cambia aquí la contraseña que quieras encriptar
+        
         String passwordPlano = "123456";
 
         String passwordEncriptado = encoder.encode(passwordPlano);

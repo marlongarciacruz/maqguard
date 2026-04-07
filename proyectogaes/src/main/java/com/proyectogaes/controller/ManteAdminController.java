@@ -22,9 +22,11 @@ import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
 @Controller
-@RequestMapping("/mantenimientos")
+@RequestMapping("/mantenimientos") // Base de todas las rutas para esta sección
 public class ManteAdminController {
 
+    // Inyecto los repositorios para poder consultar máquinas, usuarios y los
+    // mantenimientos
     @Autowired
     private MantenimientoRepository mantenimientoRepository;
 
@@ -34,7 +36,8 @@ public class ManteAdminController {
     @Autowired
     private MaquinasRepository maquinasRepository;
 
-    // ✅ LISTAR (ARREGLADO)
+    // Listar todo: traigo los mantenimientos (con sus relaciones) y los usuarios
+    // para los filtros
     @GetMapping
     public String listarMantenimientos(Model model) {
         model.addAttribute("mantenimientos", mantenimientoRepository.findAllConRelaciones());
@@ -42,6 +45,8 @@ public class ManteAdminController {
         return "mantenimientosadmin/mantenimientos";
     }
 
+    // Preparo el formulario para un mantenimiento nuevo, poniéndolo en "Pendiente"
+    // por defecto
     @GetMapping("/crear")
     public String formularioCrear(Model model) {
         try {
@@ -54,12 +59,14 @@ public class ManteAdminController {
 
             return "mantenimientosadmin/crearmanteadmin";
         } catch (Exception e) {
-            // Esto imprimirá el error real en tu consola negra
+            // Si algo truena, imprimo el error en consola para saber qué pasó
             e.printStackTrace();
             return "error";
         }
     }
 
+    // Busco un mantenimiento específico por su ID para mandarlo a la vista de
+    // edición
     @GetMapping("/editar/{id}")
     public String formularioEditar(@PathVariable Long id, Model model) {
         Mantenimiento mantenimiento = mantenimientoRepository.findById(id)
@@ -72,6 +79,8 @@ public class ManteAdminController {
         return "mantenimientosadmin/editarmanteadmin";
     }
 
+    // Aquí guardo o actualizo el mantenimiento y mando un mensaje de éxito o error
+    // a la vista
     @PostMapping("/guardar")
     public String guardar(@ModelAttribute Mantenimiento mantenimiento, RedirectAttributes flash) {
         try {
@@ -83,6 +92,7 @@ public class ManteAdminController {
         return "redirect:/mantenimientos";
     }
 
+    // Borro el registro y aviso si se pudo o no mediante un mensaje flash
     @GetMapping("/eliminar/{id}")
     public String eliminar(@PathVariable Long id, RedirectAttributes flash) {
         try {
@@ -94,12 +104,14 @@ public class ManteAdminController {
         return "redirect:/mantenimientos";
     }
 
-    // EXPORTAR EXCEL (sin cambios relevantes)
+    // Genero el reporte en Excel con toda la data de los mantenimientos
     @GetMapping("/exportarExcel")
     public void exportarExcel(HttpServletResponse response) throws IOException {
 
+        // Configuro el tipo de archivo para que sea un Excel de verdad
         response.setContentType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
 
+        // Le pego la fecha actual al nombre del archivo para llevar un orden
         String fechaActual = LocalDate.now().format(DateTimeFormatter.ofPattern("yyyyMMdd"));
         response.setHeader("Content-Disposition", "attachment; filename=mantenimientos_" + fechaActual + ".xlsx");
 
@@ -109,6 +121,7 @@ public class ManteAdminController {
 
             Sheet sheet = workbook.createSheet("Historial Mantenimientos");
 
+            // Defino los títulos de las columnas arriba del todo
             Row header = sheet.createRow(0);
             String[] columnas = { "ID", "Fecha", "Máquina", "Técnico", "Tipo", "Descripción", "Costo", "Estado" };
 
@@ -116,6 +129,7 @@ public class ManteAdminController {
                 header.createCell(i).setCellValue(columnas[i]);
             }
 
+            // Empiezo a llenar las filas con la información de la base de datos
             int rowNum = 1;
             DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
 
@@ -123,8 +137,10 @@ public class ManteAdminController {
                 Row row = sheet.createRow(rowNum++);
 
                 row.createCell(0).setCellValue(m.getId_mantenimiento());
+                // Formateo la fecha para que no salga rara en el Excel
                 row.createCell(1).setCellValue(
                         m.getFechaMantenimiento() != null ? m.getFechaMantenimiento().format(formatter) : "");
+                // Valido que los objetos relacionados no vengan nulos para que no explote
                 row.createCell(2).setCellValue(m.getMaquina() != null ? m.getMaquina().getNombre() : "N/A");
                 row.createCell(3).setCellValue(m.getUsuario() != null ? m.getUsuario().getNombre() : "N/A");
                 row.createCell(4).setCellValue(m.getTipoMantenimiento());
@@ -133,6 +149,7 @@ public class ManteAdminController {
                 row.createCell(7).setCellValue(m.getEstado());
             }
 
+            // Mando el archivo al navegador del usuario
             workbook.write(response.getOutputStream());
         }
     }
