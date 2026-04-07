@@ -39,8 +39,7 @@ public class UsuarioController {
                                  Model model) {
         if (result.hasErrors()) {
             model.addAttribute("roles", usuarioService.listarRoles());
-            model.addAttribute("titulo",
-                    usuario.getId() == null ? "Registrar Usuario" : "Editar Usuario");
+            model.addAttribute("titulo", usuario.getId() == null ? "Registrar Usuario" : "Editar Usuario");
             return "usuarios/registro";
         }
         try {
@@ -49,8 +48,7 @@ public class UsuarioController {
         } catch (RuntimeException e) {
             model.addAttribute("error", e.getMessage());
             model.addAttribute("roles", usuarioService.listarRoles());
-            model.addAttribute("titulo",
-                    usuario.getId() == null ? "Registrar Usuario" : "Editar Usuario");
+            model.addAttribute("titulo", usuario.getId() == null ? "Registrar Usuario" : "Editar Usuario");
             return "usuarios/registro";
         }
     }
@@ -68,16 +66,20 @@ public class UsuarioController {
         return "usuarios/registro";
     }
 
-  
     @GetMapping("/desactivar/{id}")
     public String desactivarGet(@PathVariable Long id) {
         return "redirect:/usuarios";
     }
 
-    //  POST para desactivar desde el formulario
     @PostMapping("/desactivar/{id}")
     public String desactivarUsuario(@PathVariable Long id) {
         usuarioService.desactivar(id);
+        return "redirect:/usuarios";
+    }
+
+    @PostMapping("/eliminar/{id}")
+    public String eliminarUsuario(@PathVariable Long id) {
+        usuarioService.eliminar(id);
         return "redirect:/usuarios";
     }
 }

@@ -26,13 +26,11 @@ public class UsuarioServiceImpl implements UsuarioService, UserDetailsService {
     private final PasswordEncoder passwordEncoder;
 
     @Override
-    @Transactional(readOnly = true)
     public List<Usuario> listarTodos() {
         return usuarioRepository.findAll();
     }
 
     @Override
-    @Transactional(readOnly = true)
     public Optional<Usuario> buscarPorId(Long id) {
         return usuarioRepository.findById(id);
     }
@@ -40,9 +38,7 @@ public class UsuarioServiceImpl implements UsuarioService, UserDetailsService {
     @Override
     public void registrar(Usuario usuario) {
         if (usuarioRepository.existsByUsername(usuario.getUsername())) {
-            throw new IllegalArgumentException(
-                "El usuario ya existe: " + usuario.getUsername()
-            );
+            throw new IllegalArgumentException("El usuario ya existe");
         }
         usuario.setPassword(passwordEncoder.encode(usuario.getPassword()));
         usuarioRepository.save(usuario);
@@ -50,25 +46,20 @@ public class UsuarioServiceImpl implements UsuarioService, UserDetailsService {
 
     @Override
     public void desactivar(Long id) {
-        if (!usuarioRepository.existsById(id)) {
-            throw new IllegalArgumentException("Usuario no encontrado: " + id);
-        }
-        usuarioRepository.desactivarById(id);
+        Usuario usuario = usuarioRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("Usuario no encontrado"));
+        usuario.setActivo(false);
+        usuarioRepository.save(usuario);
     }
 
     @Override
-    @Transactional(readOnly = true)
+    public void eliminar(Long id) {
+        usuarioRepository.deleteById(id);
+    }
+
+    @Override
     public List<Rol> listarRoles() {
         return rolRepository.findAll();
-    }
-
-    @Override
-    @Transactional(readOnly = true)
-    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        return usuarioRepository.findByUsername(username)
-            .orElseThrow(() -> new UsernameNotFoundException(
-                "Usuario no encontrado: " + username
-            ));
     }
 
     @Override
@@ -76,29 +67,43 @@ public class UsuarioServiceImpl implements UsuarioService, UserDetailsService {
         if (usuario.getRol() == null || usuario.getRol().getId() == null) {
             throw new IllegalArgumentException("Debe seleccionar un rol");
         }
+
         Rol rol = rolRepository.findById(usuario.getRol().getId())
-            .orElseThrow(() -> new IllegalArgumentException("Rol no encontrado"));
+                .orElseThrow(() -> new IllegalArgumentException("Rol no encontrado"));
         usuario.setRol(rol);
 
         if (usuario.getId() == null) {
+            // ── Nuevo usuario ──
             if (usuarioRepository.existsByUsername(usuario.getUsername())) {
-                throw new IllegalArgumentException(
-                    "El usuario ya existe: " + usuario.getUsername()
-                );
+                throw new IllegalArgumentException("El nombre de usuario ya está en uso");
             }
-            usuario.setActivo(true);
+            if (usuario.getPassword() == null || usuario.getPassword().isBlank()) {
+                throw new IllegalArgumentException("Debe ingresar una contraseña");
+            }
             usuario.setFechaRegistro(LocalDateTime.now());
+            // activo viene del formulario, no se pisa
             usuario.setPassword(passwordEncoder.encode(usuario.getPassword()));
+
         } else {
+            // ── Edición ──
             Usuario existente = usuarioRepository.findById(usuario.getId())
-                .orElseThrow(() -> new IllegalArgumentException(
-                    "Usuario no encontrado: " + usuario.getId()
-                ));
-            usuario.setPassword(existente.getPassword());
+                    .orElseThrow(() -> new IllegalArgumentException("Usuario no encontrado"));
+
+            if (usuario.getPassword() == null || usuario.getPassword().isBlank()) {
+                usuario.setPassword(existente.getPassword());
+            } else {
+                usuario.setPassword(passwordEncoder.encode(usuario.getPassword()));
+            }
             usuario.setFechaRegistro(existente.getFechaRegistro());
-            usuario.setActivo(existente.isActivo());
+            // activo viene del formulario en edición también
         }
 
         usuarioRepository.save(usuario);
+    }
+
+    @Override
+    public UserDetails loadUserByUsername(String username) {
+        return usuarioRepository.findByUsername(username)
+                .orElseThrow(() -> new UsernameNotFoundException("Usuario no encontrado: " + username));
     }
 }

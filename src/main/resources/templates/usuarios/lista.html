@@ -2,114 +2,107 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8"/>
-    <title>Gestión de Usuarios</title>
+    <title>Directorio de Usuarios MaqGuard</title>
     <style>
-        * { box-sizing: border-box; margin: 0; padding: 0; }
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: #f0f2f5;
-            padding: 2rem;
-            color: #2d3748;
-        }
-        .container { max-width: 1100px; margin: 0 auto; }
-        .header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 1.5rem;
-        }
-        h2 { font-size: 1.7rem; color: #1a202c; }
-        .btn-new {
-            background: #3182ce;
-            color: white;
-            padding: 0.6rem 1.3rem;
-            border-radius: 8px;
-            text-decoration: none;
-            font-weight: 600;
-            font-size: 0.9rem;
-        }
-        .btn-new:hover { background: #2b6cb0; }
-        .alert {
-            padding: 0.8rem 1rem;
-            border-radius: 8px;
-            margin-bottom: 1.5rem;
-            font-size: 0.9rem;
-        }
-        .alert-success { background: #f0fff4; color: #276749; border: 1px solid #9ae6b4; }
-        .card {
-            background: white;
-            border-radius: 12px;
-            box-shadow: 0 4px 24px rgba(0,0,0,0.08);
-            overflow: hidden;
-        }
-        table { width: 100%; border-collapse: collapse; }
-        thead { background: #2d3748; color: white; }
-        thead th {
-            padding: 1rem 1.2rem;
-            text-align: left;
-            font-size: 0.85rem;
-            font-weight: 600;
-            text-transform: uppercase;
-            letter-spacing: 0.05em;
-        }
-        tbody tr { border-bottom: 1px solid #e2e8f0; }
-        tbody tr:hover { background: #f7fafc; }
-        tbody td { padding: 0.9rem 1.2rem; font-size: 0.92rem; }
-        .badge {
-            display: inline-block;
-            padding: 3px 10px;
-            border-radius: 99px;
-            font-size: 0.78rem;
-            font-weight: 700;
-        }
-        .badge-admin    { background: #ebf8ff; color: #2b6cb0; }
-        .badge-tecnico  { background: #f0fff4; color: #276749; }
-        .badge-activo   { background: #f0fff4; color: #276749; }
-        .badge-inactivo { background: #fff5f5; color: #c53030; }
-        .actions { display: flex; gap: 0.5rem; align-items: center; }
-        .btn-edit {
-            padding: 4px 12px;
-            background: #edf2f7;
-            color: #4a5568;
-            border-radius: 6px;
-            text-decoration: none;
-            font-size: 0.82rem;
-            font-weight: 600;
-        }
-        .btn-edit:hover { background: #e2e8f0; }
-        .btn-delete {
-            padding: 4px 12px;
-            background: #fff5f5;
-            color: #c53030;
-            border-radius: 6px;
-            border: none;
-            font-size: 0.82rem;
-            font-weight: 600;
-            cursor: pointer;
-        }
-        .btn-delete:hover { background: #fed7d7; }
-        .empty { text-align: center; color: #a0aec0; padding: 3rem; }
+        *{box-sizing:border-box;margin:0;padding:0}
+        body{font-family:'Segoe UI',sans-serif;background:#f0f2f5;color:#2d3748}
+
+        nav{background:#2d3748;display:flex;align-items:center;padding:0 2rem;height:64px;border-bottom:3px solid #e67e22}
+        .logo{width:36px;height:36px;background:#3182ce;border-radius:8px;display:flex;align-items:center;justify-content:center;color:#fff;font-weight:800;margin-right:.6rem}
+        .brand{display:flex;align-items:center;text-decoration:none;margin-right:1.5rem}
+        .brand span{color:#fff;font-size:.95rem;font-weight:700}
+        .brand small{color:#a0aec0;font-size:.68rem;display:block}
+        nav a.nl{color:#cbd5e0;text-decoration:none;padding:.4rem .75rem;border-radius:6px;font-size:.83rem}
+        nav a.nl:hover{background:#4a5568;color:#fff}
+        .nav-r{margin-left:auto;display:flex;align-items:center;gap:.8rem;color:#fff;font-size:.83rem}
+        .av{width:32px;height:32px;background:#4a5568;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:700}
+
+       
+        .page{padding:2.5rem;max-width:1150px;margin:0 auto}
+        .ph{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:1.5rem}
+        .ph h1{font-size:1.8rem;font-weight:700;color:#1a202c}
+        .ph p{color:#718096;font-size:.88rem;margin-top:.2rem}
+        .total{background:#fff;border:1px solid #e2e8f0;border-radius:999px;padding:.3rem .9rem;font-size:.83rem;font-weight:600;color:#4a5568}
+        .total b{color:#3182ce}
+
+     
+        .tb{display:flex;align-items:center;gap:.7rem;margin-bottom:1.2rem;background:#fff;padding:.85rem 1.1rem;border-radius:12px;box-shadow:0 1px 6px rgba(0,0,0,.06)}
+        .sw{position:relative;flex:1}
+        .sw input{width:100%;padding:.5rem .75rem .5rem 2rem;border:1.5px solid #e2e8f0;border-radius:8px;font-size:.88rem;outline:none}
+        .sw input:focus{border-color:#3182ce}
+        .sw:before{content:"🔍";position:absolute;left:.55rem;top:50%;transform:translateY(-50%);font-size:.8rem}
+        .btn{display:inline-flex;align-items:center;gap:.3rem;padding:.5rem .9rem;border:1.5px solid #e2e8f0;border-radius:8px;background:#fff;color:#4a5568;font-size:.83rem;font-weight:600;cursor:pointer;text-decoration:none;white-space:nowrap}
+        .btn:hover{background:#f7fafc}
+        .btn-blue{background:#3182ce;color:#fff;border-color:#3182ce}
+        .btn-blue:hover{background:#2b6cb0}
+
+    
+        .card{background:#fff;border-radius:12px;box-shadow:0 2px 12px rgba(0,0,0,.07);overflow:hidden}
+        table{width:100%;border-collapse:collapse}
+        thead tr{background:#f7fafc;border-bottom:2px solid #e2e8f0}
+        th{padding:.8rem 1.1rem;text-align:left;font-size:.75rem;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:#718096}
+        tbody tr{border-bottom:1px solid #f0f2f5}
+        tbody tr:hover{background:#f7fafc}
+        td{padding:.82rem 1.1rem;font-size:.88rem;vertical-align:middle}
+
+     
+        .uc{display:flex;align-items:center;gap:.65rem}
+        .uav{width:34px;height:34px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:700;color:#fff;flex-shrink:0;font-size:.85rem}
+        .un{font-weight:600;color:#1a202c;font-size:.88rem}
+        .uh{font-size:.76rem;color:#a0aec0}
+
+       
+        .badge{display:inline-flex;align-items:center;gap:.25rem;padding:.25rem .65rem;border-radius:999px;font-size:.75rem;font-weight:600;border:1.5px solid transparent}
+        .b-admin{background:#ebf8ff;color:#2b6cb0;border-color:#bee3f8}
+        .b-tec{background:#f0fff4;color:#276749;border-color:#9ae6b4}
+        .dot{width:7px;height:7px;border-radius:50%;display:inline-block;margin-right:2px}
+        .d-on{background:#48bb78}.d-off{background:#fc8181}
+        .s-on{color:#276749;font-weight:600}.s-off{color:#c53030;font-weight:600}
+
+        /* DROPDOWN */
+        .aw{position:relative;display:inline-block}
+        .kbtn{background:none;border:none;color:#a0aec0;font-size:1.3rem;cursor:pointer;padding:.1rem .4rem;border-radius:6px}
+        .kbtn:hover{background:#edf2f7;color:#4a5568}
+        .dd{display:none;position:absolute;right:0;top:100%;background:#fff;border:1px solid #e2e8f0;border-radius:8px;box-shadow:0 4px 16px rgba(0,0,0,.12);z-index:100;min-width:140px;overflow:hidden}
+        .dd.open{display:block}
+        .dd a,.dd button{display:block;width:100%;padding:.55rem .9rem;text-align:left;font-size:.83rem;color:#4a5568;text-decoration:none;background:none;border:none;cursor:pointer}
+        .dd a:hover,.dd button:hover{background:#f7fafc}
+        .dd .red{color:#e53e3e}.dd .red:hover{background:#fff5f5}
+
+        .alert-s{padding:.7rem 1rem;border-radius:8px;margin-bottom:1.2rem;font-size:.88rem;background:#f0fff4;color:#276749;border:1px solid #9ae6b4}
+        .empty{text-align:center;color:#a0aec0;padding:3rem}
     </style>
 </head>
 <body>
-<div class="container">
 
-    <div class="header">
-        <h2>👥 Gestión de Usuarios</h2>
-        <a th:href="@{/usuarios/nuevo}" class="btn-new">+ Nuevo Usuario</a>
+
+
+<div class="page">
+    <div class="ph">
+        <div>
+            <h1>Directorio de Usuarios</h1>
+            <p>Administración de accesos y perfiles del sistema.</p>
+        </div>
+        <div class="total"> Total: <b th:text="${#lists.size(usuarios)}">0</b></div>
     </div>
 
-    <div class="alert alert-success" th:if="${exito}" th:text="${exito}"></div>
+    <div class="alert-s" th:if="${exito}" th:text="${exito}"></div>
+
+    <div class="tb">
+        <div class="sw">
+            <input type="text" id="si" placeholder="Buscar usuario..." oninput="filtrar()"/>
+        </div>
+        <a href="#" class="btn"> Excel</a>
+        <button class="btn"> Filtros</button>
+        <a th:href="@{/usuarios/nuevo}" class="btn btn-blue">+ Nuevo Usuario</a>
+    </div>
 
     <div class="card">
-        <table>
+        <table id="tbl">
             <thead>
                 <tr>
-                    <th>#</th>
-                    <th>Nombre completo</th>
-                    <th>Username</th>
-                    <th>Email</th>
-                    <th>Rol</th>
+                    <th>Usuario / ID</th>
+                    <th>Rol Asignado</th>
                     <th>Estado</th>
                     <th>Registro</th>
                     <th>Acciones</th>
@@ -117,42 +110,68 @@
             </thead>
             <tbody>
                 <tr th:if="${#lists.isEmpty(usuarios)}">
-                    <td colspan="8" class="empty">No hay usuarios registrados.</td>
+                    <td colspan="5" class="empty">No hay usuarios registrados.</td>
                 </tr>
-                <tr th:each="u : ${usuarios}" th:if="${u != null}">
-                    <td th:text="${u.id}"></td>
-                    <td th:text="${u.nombre + ' ' + u.apellido}"></td>
-                    <td th:text="${u.username}"></td>
-                    <td th:text="${u.email}"></td>
+                <tr th:each="u, s : ${usuarios}" th:if="${u != null}">
                     <td>
-                        <span class="badge"
-                              th:classappend="${u.rol != null and u.rol.nombre == 'ROLE_ADMINISTRADOR'} ? 'badge-admin' : 'badge-tecnico'"
-                              th:text="${u.rol != null} ? ${u.rol.nombre} : 'Sin rol'">
+                        <div class="uc">
+                            <div class="uav"
+                                 th:style="${s.index%5==0}?'background:#3182ce':(${s.index%5==1}?'background:#38a169':(${s.index%5==2}?'background:#d69e2e':(${s.index%5==3}?'background:#805ad5':'background:#dd6b20')))"
+                                 th:text="${u.nombre!=null?u.nombre.substring(0,1).toUpperCase():'?'}"></div>
+                            <div>
+                                <div class="un" th:text="${u.nombre+' '+u.apellido}"></div>
+                                <div class="uh" th:text="'@'+${u.username}"></div>
+                            </div>
+                        </div>
+                    </td>
+                    <td>
+                        <span class="badge" th:classappend="${u.rol!=null and u.rol.nombre=='ROLE_ADMINISTRADOR'}?'b-admin':'b-tec'">
+                            <span th:text="${u.rol!=null and u.rol.nombre=='ROLE_ADMINISTRADOR'}?'.':'.'"></span>
+                            <span th:text="${u.rol!=null}?${u.rol.nombre.replace('ROLE_','')}:'Sin rol'"></span>
                         </span>
                     </td>
                     <td>
-                        <span class="badge"
-                              th:classappend="${u.activo} ? 'badge-activo' : 'badge-inactivo'"
-                              th:text="${u.activo} ? 'Activo' : 'Inactivo'">
+                        <span th:classappend="${u.activo}?'s-on':'s-off'">
+                            <span class="dot" th:classappend="${u.activo}?'d-on':'d-off'"></span>
+                            <span th:text="${u.activo}?'Activo':'Inactivo'"></span>
                         </span>
                     </td>
-                    <td th:text="${u.fechaRegistro != null} ? ${#temporals.format(u.fechaRegistro, 'dd/MM/yyyy')} : '-'"></td>
+                    <td th:text="${u.fechaRegistro!=null}?${#temporals.format(u.fechaRegistro,'dd/MM/yyyy')}:'-'"></td>
                     <td>
-                        <div class="actions">
-                            <a th:href="@{/usuarios/editar/{id}(id=${u.id})}" class="btn-edit">Editar</a>
-                            <form th:action="@{/usuarios/desactivar/{id}(id=${u.id})}"
-                                  method="post"
-                                  onsubmit="return confirm('¿Desactivar este usuario?')">
-                                <button type="submit" class="btn-delete"
-                                        th:if="${u.activo}">Desactivar</button>
-                            </form>
+                        <div class="aw">
+                            <button class="kbtn" onclick="toggleMenu(this)">⋮</button>
+                            <div class="dd">
+                                <a th:href="@{/usuarios/editar/{id}(id=${u.id})}"> Editar</a>
+                                <form th:action="@{/usuarios/desactivar/{id}(id=${u.id})}" method="post"
+                                      onsubmit="return confirm('¿Desactivar este usuario?')">
+                                    <button type="submit" th:if="${u.activo}"> Desactivar</button>
+                                </form>
+                                <form th:action="@{/usuarios/eliminar/{id}(id=${u.id})}" method="post"
+                                      onsubmit="return confirm('¿Eliminar permanentemente este usuario?')">
+                                    <button type="submit" class="red">🗑 Eliminar</button>
+                                </form>
+                            </div>
                         </div>
                     </td>
                 </tr>
             </tbody>
         </table>
     </div>
-
 </div>
+
+<script>
+    document.addEventListener('click', e => {
+        if (!e.target.closest('.aw')) document.querySelectorAll('.dd').forEach(m => m.classList.remove('open'));
+    });
+    function toggleMenu(b) {
+        const m = b.nextElementSibling, o = m.classList.contains('open');
+        document.querySelectorAll('.dd').forEach(x => x.classList.remove('open'));
+        if (!o) m.classList.add('open');
+    }
+    function filtrar() {
+        const q = document.getElementById('si').value.toLowerCase();
+        document.querySelectorAll('#tbl tbody tr').forEach(r => r.style.display = r.textContent.toLowerCase().includes(q) ? '' : 'none');
+    }
+</script>
 </body>
 </html>

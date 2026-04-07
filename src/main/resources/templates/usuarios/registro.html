@@ -1,204 +1,173 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org"
-      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<html xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8"/>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-    <title th:text="${titulo}">Registrar Usuario</title>
+    <title th:text="${titulo}">Registrar Usuario MaqGuard</title>
     <style>
-        * { box-sizing: border-box; margin: 0; padding: 0; }
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: #f0f2f5;
-            min-height: 100vh;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            padding: 2rem;
-        }
-        .card {
-            background: white;
-            border-radius: 12px;
-            box-shadow: 0 4px 24px rgba(0,0,0,0.10);
-            padding: 2.5rem 3rem;
-            width: 100%;
-            max-width: 520px;
-        }
-        h2 {
-            color: #1a202c;
-            margin-bottom: 0.4rem;
-            font-size: 1.6rem;
-        }
-        .subtitle {
-            color: #718096;
-            font-size: 0.9rem;
-            margin-bottom: 2rem;
-        }
-        .form-group {
-            margin-bottom: 1.2rem;
-        }
-        label {
-            display: block;
-            font-size: 0.85rem;
-            font-weight: 600;
-            color: #4a5568;
-            margin-bottom: 0.4rem;
-        }
-        input, select {
-            width: 100%;
-            padding: 0.65rem 0.9rem;
-            border: 1.5px solid #e2e8f0;
-            border-radius: 8px;
-            font-size: 0.95rem;
-            color: #2d3748;
-            transition: border-color 0.2s;
-            background: #f7fafc;
-        }
-        input:focus, select:focus {
-            outline: none;
-            border-color: #4299e1;
-            background: white;
-        }
-        .error-field {
-            border-color: #fc8181 !important;
-        }
-        .error-msg {
-            color: #e53e3e;
-            font-size: 0.8rem;
-            margin-top: 0.3rem;
-        }
-        .alert {
-            padding: 0.8rem 1rem;
-            border-radius: 8px;
-            margin-bottom: 1.5rem;
-            font-size: 0.9rem;
-        }
-        .alert-danger  { background: #fff5f5; color: #c53030; border: 1px solid #feb2b2; }
-        .alert-success { background: #f0fff4; color: #276749; border: 1px solid #9ae6b4; }
-        .row { display: flex; gap: 1rem; }
-        .row .form-group { flex: 1; }
-        .badge-rol {
-            display: inline-block;
-            padding: 2px 8px;
-            border-radius: 99px;
-            font-size: 0.75rem;
-            font-weight: 600;
-            background: #ebf8ff;
-            color: #2b6cb0;
-        }
-        .btn-primary {
-            width: 100%;
-            padding: 0.75rem;
-            background: #3182ce;
-            color: white;
-            border: none;
-            border-radius: 8px;
-            font-size: 1rem;
-            font-weight: 600;
-            cursor: pointer;
-            transition: background 0.2s;
-            margin-top: 0.5rem;
-        }
-        .btn-primary:hover { background: #2b6cb0; }
-        .btn-secondary {
-            display: inline-block;
-            margin-top: 1rem;
-            color: #4299e1;
-            text-decoration: none;
-            font-size: 0.9rem;
-        }
-        .btn-secondary:hover { text-decoration: underline; }
+        *{box-sizing:border-box;margin:0;padding:0}
+        body{font-family:'Segoe UI',sans-serif;background:#f0f2f5;color:#2d3748}
+        nav{background:#2d3748;display:flex;align-items:center;padding:0 2rem;height:64px;border-bottom:3px solid #e67e22}
+        .logo{width:36px;height:36px;background:#3182ce;border-radius:8px;display:flex;align-items:center;justify-content:center;color:#fff;font-weight:800;margin-right:.6rem}
+        .brand{display:flex;align-items:center;text-decoration:none;margin-right:1.5rem}
+        .brand span{color:#fff;font-size:.95rem;font-weight:700}
+        .brand small{color:#a0aec0;font-size:.68rem;display:block}
+        nav a.nl{color:#cbd5e0;text-decoration:none;padding:.4rem .75rem;border-radius:6px;font-size:.83rem}
+        nav a.nl:hover{background:#4a5568;color:#fff}
+        .nav-r{margin-left:auto;display:flex;align-items:center;gap:.8rem;color:#fff;font-size:.83rem}
+        .av{width:32px;height:32px;background:#4a5568;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:700}
+        .page{padding:2rem 2.5rem;max-width:800px;margin:0 auto}
+        .bc{font-size:.83rem;color:#718096;margin-bottom:1.3rem}
+        .bc a{color:#3182ce;text-decoration:none}
+        .bc a:hover{text-decoration:underline}
+        .fc{background:#fff;border-radius:14px;box-shadow:0 2px 16px rgba(0,0,0,.08);overflow:hidden}
+        .fh{display:flex;align-items:center;gap:.85rem;padding:1.3rem 1.75rem;border-bottom:1px solid #e2e8f0}
+        .fhi{width:48px;height:48px;background:#ebf8ff;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:1.35rem}
+        .fh h2{font-size:1.2rem;font-weight:700;color:#1a202c}
+        .fh p{font-size:.82rem;color:#718096;margin-top:.1rem}
+        .fs{padding:1.4rem 1.75rem;border-bottom:1px solid #f0f2f5}
+        .st{font-size:.9rem;font-weight:700;color:#2d3748;padding-bottom:.7rem;border-bottom:1px solid #e2e8f0;margin-bottom:1.2rem}
+        .fg{display:grid;grid-template-columns:1fr 1fr;gap:1rem}
+        .g{display:flex;flex-direction:column;gap:.3rem}
+        label{font-size:.82rem;font-weight:600;color:#4a5568}
+        .iw{position:relative}
+        .iw .ic{position:absolute;left:.65rem;top:50%;transform:translateY(-50%);color:#a0aec0;pointer-events:none}
+        .iw input,.iw select{width:100%;padding:.55rem .75rem .55rem 2.1rem;border:1.5px solid #e2e8f0;border-radius:8px;font-size:.87rem;color:#2d3748;background:#fff;outline:none;transition:border .2s;appearance:none}
+        .iw input:focus,.iw select:focus{border-color:#3182ce;box-shadow:0 0 0 3px rgba(49,130,206,.1)}
+        .iw input.err,.iw select.err{border-color:#fc8181}
+        .sw::after{content:"▾";position:absolute;right:.65rem;top:50%;transform:translateY(-50%);color:#a0aec0;pointer-events:none;font-size:.78rem}
+        .sw select{padding-right:1.8rem}
+        .fe{font-size:.75rem;color:#e53e3e}
+        .ae{padding:.7rem 1rem;border-radius:8px;margin:1rem 1.75rem;font-size:.87rem;background:#fff5f5;color:#c53030;border:1px solid #fc8181}
+        .ff{padding:1.1rem 1.75rem;display:flex;justify-content:flex-end;gap:.6rem;border-top:1px solid #e2e8f0;background:#fafafa}
+        .btn-c{padding:.55rem 1.1rem;border:1.5px solid #e2e8f0;border-radius:8px;background:#fff;color:#4a5568;font-size:.87rem;font-weight:600;cursor:pointer;text-decoration:none}
+        .btn-c:hover{background:#f7fafc}
+        .btn-s{padding:.55rem 1.3rem;background:#276749;color:#fff;border:none;border-radius:8px;font-size:.87rem;font-weight:700;cursor:pointer;display:flex;align-items:center;gap:.3rem}
+        .btn-s:hover{background:#22543d}
+        @media(max-width:560px){.fg{grid-template-columns:1fr}.page{padding:1.25rem}}
     </style>
 </head>
 <body>
 
-<div class="card">
+<div class="page">
+    <div class="bc">
+        <a th:href="@{/usuarios}">Usuarios</a> / <span th:text="${titulo}">Nuevo Registro</span>
+    </div>
 
-    <h2 th:text="${titulo}">Registrar Usuario</h2>
-    <p class="subtitle">Complete todos los campos requeridos</p>
-
-    <!-- Mensaje de error de negocio -->
-    <div class="alert alert-danger" th:if="${error}" th:text="${error}"></div>
-
-    <!-- Formulario -->
-    <form th:action="@{/usuarios/guardar}" th:object="${usuario}" method="post">
-
-        <!-- ID oculto para edición -->
-        <input type="hidden" th:field="*{id}"/>
-
-        <div class="row">
-            <div class="form-group">
-                <label for="nombre">Nombre *</label>
-                <input type="text" id="nombre" th:field="*{nombre}"
-                       th:classappend="${#fields.hasErrors('nombre')} ? 'error-field'"
-                       placeholder="Ej: Juan"/>
-                <span class="error-msg" th:if="${#fields.hasErrors('nombre')}"
-                      th:errors="*{nombre}"></span>
-            </div>
-            <div class="form-group">
-                <label for="apellido">Apellido *</label>
-                <input type="text" id="apellido" th:field="*{apellido}"
-                       th:classappend="${#fields.hasErrors('apellido')} ? 'error-field'"
-                       placeholder="Ej: Pérez"/>
-                <span class="error-msg" th:if="${#fields.hasErrors('apellido')}"
-                      th:errors="*{apellido}"></span>
+    <div class="fc">
+        <div class="fh">
+            <div class="fhi">👤</div>
+            <div>
+                <h2 th:text="${titulo}">Registrar Nuevo Usuario</h2>
+                <p>Cree una cuenta de acceso para el personal.</p>
             </div>
         </div>
 
-        <div class="form-group">
-            <label for="email">Email *</label>
-            <input type="email" id="email" th:field="*{email}"
-                   th:classappend="${#fields.hasErrors('email')} ? 'error-field'"
-                   placeholder="correo@empresa.com"/>
-            <span class="error-msg" th:if="${#fields.hasErrors('email')}"
-                  th:errors="*{email}"></span>
-        </div>
+        <div class="ae" th:if="${error}" th:text="${error}"></div>
 
-        <div class="form-group">
-            <label for="username">Nombre de usuario *</label>
-            <input type="text" id="username" th:field="*{username}"
-                   th:classappend="${#fields.hasErrors('username')} ? 'error-field'"
-                   placeholder="Mínimo 4 caracteres"/>
-            <span class="error-msg" th:if="${#fields.hasErrors('username')}"
-                  th:errors="*{username}"></span>
-        </div>
+        <form th:action="@{/usuarios/guardar}" method="post" th:object="${usuario}">
+            <input type="hidden" th:field="*{id}"/>
 
-        <!-- Solo mostrar contraseña en creación (no en edición) -->
-        <div class="form-group" th:if="${usuario.id == null}">
-            <label for="password">Contraseña *</label>
-            <input type="password" id="password" th:field="*{password}"
-                   th:classappend="${#fields.hasErrors('password')} ? 'error-field'"
-                   placeholder="Mínimo 8 caracteres"/>
-            <span class="error-msg" th:if="${#fields.hasErrors('password')}"
-                  th:errors="*{password}"></span>
-        </div>
+            <!-- Sección 1: Identidad -->
+            <div class="fs">
+                <div class="st">👤 Identidad del Usuario</div>
+                <div class="fg">
+                    <div class="g">
+                        <label>Nombre</label>
+                        <div class="iw">
+                            <span class="ic">✏</span>
+                            <input type="text" th:field="*{nombre}"
+                                   th:class="${#fields.hasErrors('nombre')}?'err':''"
+                                   placeholder="Ej: Juan"/>
+                        </div>
+                        <span class="fe" th:if="${#fields.hasErrors('nombre')}" th:errors="*{nombre}"></span>
+                    </div>
 
-        <!--  Selección de rol -->
-        <div class="form-group">
-            <label for="rol">Rol * <span class="badge-rol"></span></label>
-            <select id="rol" th:field="*{rol.id}"
-                    th:classappend="${#fields.hasErrors('rol')} ? 'error-field'">
-                <option value="">-- Seleccione un rol --</option>
-                <option th:each="r : ${roles}"
-                        th:value="${r.id}"
-                        th:text="${r.nombre}">
-                </option>
-            </select>
-            <span class="error-msg" th:if="${#fields.hasErrors('rol')}"
-                  th:errors="*{rol}"></span>
-        </div>
+                    <div class="g">
+                        <label>Apellido</label>
+                        <div class="iw">
+                            <span class="ic">✏</span>
+                            <input type="text" th:field="*{apellido}"
+                                   th:class="${#fields.hasErrors('apellido')}?'err':''"
+                                   placeholder="Ej: Pérez"/>
+                        </div>
+                        <span class="fe" th:if="${#fields.hasErrors('apellido')}" th:errors="*{apellido}"></span>
+                    </div>
 
-        <button type="submit" class="btn-primary">
-            <span th:if="${usuario.id == null}">✔ Registrar Usuario</span>
-            <span th:if="${usuario.id != null}">✔ Guardar Cambios</span>
-        </button>
+                    <!-- ✅ CAMPO EMAIL AÑADIDO -->
+                    <div class="g">
+                        <label>Correo Electrónico</label>
+                        <div class="iw">
+                            <span class="ic">✉</span>
+                            <input type="email" th:field="*{email}"
+                                   th:class="${#fields.hasErrors('email')}?'err':''"
+                                   placeholder="Ej: juan@empresa.com"/>
+                        </div>
+                        <span class="fe" th:if="${#fields.hasErrors('email')}" th:errors="*{email}"></span>
+                    </div>
 
-    </form>
+                    <div class="g">
+                        <label>Nombre de Usuario</label>
+                        <div class="iw">
+                            <span class="ic">@</span>
+                            <input type="text" th:field="*{username}"
+                                   th:class="${#fields.hasErrors('username')}?'err':''"
+                                   placeholder="Ej: jperez24"/>
+                        </div>
+                        <span class="fe" th:if="${#fields.hasErrors('username')}" th:errors="*{username}"></span>
+                    </div>
+                </div>
+            </div>
 
-    <a class="btn-secondary" th:href="@{/usuarios}">← Volver al listado</a>
-   
+            <!-- Sección 2: Credenciales -->
+            <div class="fs">
+                <div class="st">🔐 Credenciales y Permisos</div>
+                <div class="fg">
+                    <div class="g">
+                        <label>Contraseña</label>
+                        <div class="iw">
+                            <span class="ic">🔑</span>
+                            <input type="password" th:field="*{password}"
+                                   placeholder="Mínimo 8 caracteres"/>
+                        </div>
+                    </div>
 
+                    <div class="g">
+                        <label>Rol de Sistema</label>
+                        <div class="iw sw">
+                            <span class="ic">🛡</span>
+                            <select th:field="*{rol.id}">
+                                <option value="">Seleccione rol...</option>
+                                <option th:each="r : ${roles}"
+                                        th:value="${r.id}"
+                                        th:text="${r.nombre.replace('ROLE_','')}"></option>
+                            </select>
+                        </div>
+                        <span class="fe" th:if="${#fields.hasErrors('rol')}" th:errors="*{rol}"></span>
+                    </div>
+
+                    <!-- ✅ CORREGIDO: th:field="*{activo}" en lugar de name="activoStr" -->
+                    <div class="g">
+                        <label>Estado de la Cuenta</label>
+                        <div class="iw sw">
+                            <span class="ic">⚡</span>
+                            <select th:field="*{activo}">
+                                <option value="true">Activo (Permitir acceso)</option>
+                                <option value="false">Inactivo (Bloquear acceso)</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Footer -->
+            <div class="ff">
+                <a th:href="@{/usuarios}" class="btn-c">Cancelar</a>
+                <button type="submit" class="btn-s">
+                    ✔ <span th:text="${usuario.id == null} ? 'Crear Usuario' : 'Guardar Cambios'">Crear Usuario</span>
+                </button>
+            </div>
+        </form>
+    </div>
 </div>
-
 </body>
 </html>
