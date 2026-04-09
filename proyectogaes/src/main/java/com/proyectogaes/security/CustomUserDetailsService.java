@@ -29,7 +29,7 @@ public class CustomUserDetailsService implements UserDetailsService {
         System.out.println("===> Estado: " + usuario.getEstado());
         System.out.println("===> Rol: " + usuario.getRol());
 
-        String rolNombre = "ROLE_" + usuario.getRol().getDescripcion_rol().toUpperCase();
+        String rolNombre = "ROLE_" + usuario.getRol().getDescripcionRol().toUpperCase();
         System.out.println("===> Rol asignado: " + rolNombre);
 
         return new User(

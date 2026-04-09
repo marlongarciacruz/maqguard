@@ -201,7 +201,7 @@ public class UsuariosController {
                         || u.getEstado().equalsIgnoreCase(estado))
                 .filter(u -> rol == null || rol.isBlank()
                         || (u.getRol() != null
-                                && u.getRol().getDescripcion_rol().equalsIgnoreCase(rol)))
+                                && u.getRol().getDescripcionRol().equalsIgnoreCase(rol)))
                 .collect(Collectors.toList());
 
         // 2. Respuesta HTTP
@@ -308,7 +308,7 @@ public class UsuariosController {
 
                 String rolDisplay = "Desconocido";
                 if (u.getRol() != null) {
-                    String desc = u.getRol().getDescripcion_rol();
+                    String desc = u.getRol().getDescripcionRol();
                     rolDisplay = desc.substring(0, 1).toUpperCase() + desc.substring(1).toLowerCase();
                 }
 

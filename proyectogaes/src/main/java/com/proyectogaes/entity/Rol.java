@@ -13,7 +13,7 @@ public class Rol {
     @Column(name = "id_rol")
     private Integer id;
 
-    // Forzamos el nombre exacto para que Lombok genere getDescripcion_rol()
+    // Cambiamos el nombre de la variable a camelCase
     @Column(name = "descripcion_rol")
-    private String descripcion_rol; 
+    private String descripcionRol; 
 }
