@@ -170,14 +170,20 @@
                                     <h6 class="fw-bold text-secondary mb-3 border-bottom pb-2">1. Identificación del
                                         Activo</h6>
                                     <div class="row g-4">
+
                                         <div class="col-md-8">
                                             <label class="form-label fw-semibold text-dark">Nombre de la Máquina</label>
                                             <div class="input-group">
                                                 <span class="input-group-text bg-white border-end-0 text-muted"><i
                                                         class="bi bi-tag-fill"></i></span>
-                                                <input type="text" th:field="*{nombre}" required
-                                                    class="form-control form-control-lg border-start-0 shadow-none">
-                                                <div class="invalid-feedback">El nombre es obligatorio.</div>
+                                                <input type="text" th:field="*{nombre}" maxlength="30" required
+                                                    class="form-control form-control-lg border-start-0 shadow-none"
+                                                    th:classappend="${#fields.hasErrors('nombre')} ? 'is-invalid'">
+                                                <div class="invalid-feedback" th:if="${#fields.hasErrors('nombre')}"
+                                                    th:errors="*{nombre}"></div>
+                                                <div class="invalid-feedback"
+                                                    th:unless="${#fields.hasErrors('nombre')}">El nombre es obligatorio
+                                                    (máx. 30 caracteres).</div>
                                             </div>
                                         </div>
 
@@ -186,8 +192,14 @@
                                             <div class="input-group">
                                                 <span class="input-group-text bg-white border-end-0 text-muted"><i
                                                         class="bi bi-qr-code"></i></span>
-                                                <input type="text" th:field="*{modelo}" required
-                                                    class="form-control form-control-lg border-start-0 shadow-none">
+                                                <input type="text" th:field="*{modelo}" maxlength="20" required
+                                                    class="form-control form-control-lg border-start-0 shadow-none"
+                                                    th:classappend="${#fields.hasErrors('modelo')} ? 'is-invalid'">
+                                                <div class="invalid-feedback" th:if="${#fields.hasErrors('modelo')}"
+                                                    th:errors="*{modelo}"></div>
+                                                <div class="invalid-feedback"
+                                                    th:unless="${#fields.hasErrors('modelo')}">El modelo es obligatorio
+                                                    (máx. 20 caracteres).</div>
                                             </div>
                                         </div>
 
@@ -196,8 +208,10 @@
                                             <div class="input-group">
                                                 <span class="input-group-text bg-white border-end-0 text-muted"><i
                                                         class="bi bi-geo-alt-fill"></i></span>
-                                                <input type="text" th:field="*{ubicacion}" required
-                                                    class="form-control border-start-0 shadow-none">
+                                                <input type="text" th:field="*{ubicacion}" maxlength="50" required
+                                                    class="form-control border-start-0 shadow-none"
+                                                    th:classappend="${#fields.hasErrors('ubicacion')} ? 'is-invalid'">
+                                                <div class="invalid-feedback" th:errors="*{ubicacion}"></div>
                                             </div>
                                         </div>
                                     </div>
@@ -211,36 +225,28 @@
                                     <div class="row g-4">
                                         <div class="col-md-4">
                                             <label class="form-label fw-semibold text-dark">Estado Actual</label>
-                                            <div class="input-group">
-                                                <span class="input-group-text bg-white border-end-0 text-muted"><i
-                                                        class="bi bi-toggle-on"></i></span>
-                                                <select th:field="*{estado}" required
-                                                    class="form-select border-start-0 shadow-none">
-                                                    <option value="Activo">Activo</option>
-                                                    <option value="Inactivo">Inactivo</option>
-                                                    <option value="En mantenimiento">En mantenimiento</option>
-                                                </select>
-                                            </div>
+                                            <select th:field="*{estado}" class="form-select"
+                                                th:classappend="${#fields.hasErrors('estado')} ? 'is-invalid'" required>
+                                                <option value="Activo">Activo</option>
+                                                <option value="Inactivo">Inactivo</option>
+                                                <option value="En mantenimiento">En mantenimiento</option>
+                                            </select>
                                         </div>
 
                                         <div class="col-md-4">
                                             <label class="form-label fw-semibold text-dark">Último Mantenimiento</label>
-                                            <div class="input-group">
-                                                <span class="input-group-text bg-white border-end-0 text-muted"><i
-                                                        class="bi bi-calendar-check"></i></span>
-                                                <input type="date" th:field="*{fechaUltimoMantenimiento}" required
-                                                    class="form-control border-start-0 shadow-none">
-                                            </div>
+                                            <input type="date" th:field="*{fechaUltimoMantenimiento}" required
+                                                class="form-control"
+                                                th:classappend="${#fields.hasErrors('fechaUltimoMantenimiento')} ? 'is-invalid'">
+                                            <div class="invalid-feedback" th:errors="*{fechaUltimoMantenimiento}"></div>
                                         </div>
 
                                         <div class="col-md-4">
                                             <label class="form-label fw-semibold text-dark">Intervalo (Días)</label>
-                                            <div class="input-group">
-                                                <span class="input-group-text bg-white border-end-0 text-muted"><i
-                                                        class="bi bi-arrow-repeat"></i></span>
-                                                <input type="number" th:field="*{intervaloMantenimiento}" required
-                                                    class="form-control border-start-0 shadow-none">
-                                            </div>
+                                            <input type="number" th:field="*{intervaloMantenimiento}" min="1" max="365"
+                                                required class="form-control"
+                                                th:classappend="${#fields.hasErrors('intervaloMantenimiento')} ? 'is-invalid'">
+                                            <div class="invalid-feedback" th:errors="*{intervaloMantenimiento}"></div>
                                         </div>
                                     </div>
                                 </div>

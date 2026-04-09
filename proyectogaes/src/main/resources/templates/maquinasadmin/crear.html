@@ -6,23 +6,158 @@
     <title>Nueva Máquina | MaqGuard</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
-    <link rel="stylesheet" th:href="@{/css/maquinas.css}">
+    <style>
+        :root {
+            /* Paleta Balanceada */
+            --bg-light: #f4f7f6;
+            /* Blanco humo profesional */
+            --card-white: #ffffff;
+            --dark-nav: #1a1a1a;
+            --accent-orange: #f97316;
+            --text-dark: #2d3436;
+            --text-muted: #636e72;
+        }
+
+        body {
+            background-color: var(--bg-light);
+            color: var(--text-dark);
+            font-family: 'Segoe UI', system-ui, sans-serif;
+            margin: 0;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        /* --- NAVBAR (Mantenemos oscuro para jerarquía) --- */
+        .navbar {
+            background-color: var(--dark-nav) !important;
+            border-bottom: 3px solid var(--accent-orange) !important;
+            padding: 0.5rem 0;
+        }
+
+        .navbar-nav .nav-link {
+            color: rgba(255, 255, 255, 0.8) !important;
+            transition: color 0.2s ease-in-out;
+            font-weight: 500;
+        }
+
+        .navbar-nav .nav-link:hover,
+        .navbar-nav .nav-link.active {
+            color: var(--accent-orange) !important;
+        }
+
+        .text-orange {
+            color: var(--accent-orange) !important;
+        }
+
+        /* --- KPI CARDS (Blanco con Bordes de Color) --- */
+        .card-kpi {
+            background: var(--card-white);
+            border: none;
+            border-radius: 12px;
+            border-left: 5px solid;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        .card-kpi:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .kpi-icon-container {
+            width: 45px;
+            height: 45px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(0, 0, 0, 0.03);
+            font-size: 1.3rem;
+        }
+
+        /* --- MODULE CARDS (Limpio y Profesional) --- */
+        .module-card {
+            background: var(--card-white);
+            border: 1px solid #e0e0e0;
+            border-radius: 18px;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.02);
+        }
+
+        .module-card:hover {
+            border-color: var(--accent-orange);
+            transform: scale(1.03);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.08);
+        }
+
+        /* Iconos en color original para mejor visibilidad en blanco */
+        .module-card img {
+            width: 55px;
+            height: 55px;
+            margin-bottom: 1.2rem;
+            transition: transform 0.3s ease;
+        }
+
+        .module-card:hover img {
+            transform: rotate(5deg);
+        }
+
+        /* --- FOOTER --- */
+        footer {
+            background-color: var(--dark-nav) !important;
+            border-top: 3px solid var(--accent-orange) !important;
+            margin-top: auto;
+            padding: 2rem 0;
+            color: #fff;
+        }
+
+        .btn-outline-custom {
+            border: 1px solid var(--accent-orange);
+            color: var(--accent-orange);
+            border-radius: 50px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            transition: 0.3s;
+        }
+
+        .btn-outline-custom:hover {
+            background: var(--accent-orange);
+            color: #fff;
+        }
+
+        .lazy-load {
+            opacity: 0;
+            animation: fadeIn 0.6s forwards;
+        }
+
+        @keyframes fadeIn {
+            to {
+                opacity: 1;
+            }
+        }
+
+        /* Ajuste de badges para fondo claro */
+        .badge-light-custom {
+            background: rgba(25, 135, 84, 0.1);
+            color: #198754;
+            border: 1px solid rgba(25, 135, 84, 0.2);
+        }
+    </style>
 </head>
 
 <body>
 
-
-    <nav class="navbar navbar-expand-lg navbar-dark shadow-sm py-3"
-        style="background-color:#4B4F54; border-bottom:3px solid #f97316;">
+    <nav class="navbar navbar-expand-lg navbar-dark sticky-top">
         <div class="container">
-            <a class="navbar-brand d-flex align-items-center me-5" th:href="@{/inicio}">
+            <a class="navbar-brand d-flex align-items-center" th:href="@{/inicio}">
                 <div class="bg-white rounded-circle p-1 me-2 d-flex align-items-center justify-content-center"
-                    style="width: 45px; height: 45px;">
-                    <img th:src="@{/assets/maqguard-icon.png}" width="32" height="32" alt="Logo">
+                    style="width: 38px; height: 38px;">
+                    <img th:src="@{/assets/maqguard-icon.png}" width="26" height="26" alt="Logo">
                 </div>
-                <div>
-                    <span class="d-block fw-bold text-white lh-1" style="letter-spacing: 1px;">MAQGUARD</span>
-                    <span class="d-block text-white-50" style="font-size: 0.7rem;">Panel de Control</span>
+                <div class="lh-1">
+                    <span class="d-block fw-bold text-white small" style="letter-spacing: 1px;">MAQGUARD</span>
+                    <span class="text-orange fw-bold" style="font-size: 0.65rem;">ADMIN PANEL</span>
                 </div>
             </a>
 
@@ -31,97 +166,43 @@
             </button>
 
             <div class="collapse navbar-collapse" id="navbarNav">
-                <ul class="navbar-nav me-auto mb-2 mb-lg-0 navbar-hover gap-2">
+                <ul class="navbar-nav ms-lg-5 me-auto gap-2">
                     <li class="nav-item"><a class="nav-link active" th:href="@{/inicio}"><i
-                                class="bi bi-house-door-fill"></i></a></li>
-                    <li class="nav-item"><a class="nav-link text-white-50" th:href="@{/maquinas}"><i
-                                class="bi bi-cpu"></i>
+                                class="bi bi-house-door"></i> Inicio</a></li>
+                    <li class="nav-item"><a class="nav-link" th:href="@{/maquinas}"><i class="bi bi-cpu"></i>
                             Máquinas</a></li>
-                    <li class="nav-item"><a class="nav-link text-white-50" th:href="@{/inventario}"><i
-                                class="bi bi-box-seam"></i> Inventario</a></li>
-                    <li class="nav-item"><a class="nav-link text-white-50" th:href="@{/mantenimientos}"><i
-                                class="bi bi-tools"></i> Mantenimiento</a></li>
-                    <li class="nav-item"><a class="nav-link text-white-50" th:href="@{/alertas}"><i
+                    <li class="nav-item"><a class="nav-link" th:href="@{/inventario}"><i class="bi bi-box-seam"></i>
+                            Inventario</a></li>
+                    <li class="nav-item"><a class="nav-link" th:href="@{/mantenimientos}"><i class="bi bi-tools"></i>
+                            Mantenimiento</a></li>
+                    <li class="nav-item"><a class="nav-link" th:href="@{/alertas}"><i
                                 class="bi bi-exclamation-triangle"></i> Alertas</a></li>
                 </ul>
 
-                <ul class="navbar-nav align-items-center gap-3">
-                    <li class="nav-item dropdown position-relative">
-                        <a class="nav-link text-white position-relative" href="#" id="notiDropdown"
+                <div class="d-flex align-items-center gap-4">
+                    <i class="bi bi-bell text-white-50 fs-5 cursor-pointer"></i>
+                    <div class="dropdown">
+                        <a href="#"
+                            class="d-flex align-items-center gap-2 text-decoration-none dropdown-toggle text-white"
                             data-bs-toggle="dropdown">
-                            <i class="bi bi-bell fs-5"></i>
-                            <span th:if="${totalNotificaciones > 0}"
-                                class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger border border-dark badge-pulse"
-                                th:text="${totalNotificaciones}">0</span>
+                            <img th:src="@{/assets/avatar_default.png}" width="32" height="32"
+                                class="rounded-circle border border-orange">
+                            <span class="fw-bold small d-none d-sm-inline">Admin</span>
                         </a>
-                        <ul class="dropdown-menu dropdown-menu-end shadow-lg rounded-4 border-0 dropdown-menu-animate p-0 overflow-hidden"
-                            style="width: 350px;">
-                            <li
-                                class="bg-primary bg-gradient p-3 d-flex justify-content-between align-items-center text-white">
-                                <h6 class="m-0 fw-bold"><i class="bi bi-bell-fill me-2"></i>Notificaciones</h6>
-                            </li>
-                            <div class="noti-scroll">
-                                <div th:if="${#lists.isEmpty(ultimasNotificaciones)}"
-                                    class="text-center py-5 text-muted">
-                                    <i class="bi bi-chat-square-dots fs-1 mb-2 d-block opacity-25"></i>
-                                    <span class="small">Sin novedades por ahora</span>
-                                </div>
-                                <li th:each="n : ${ultimasNotificaciones}" class="border-bottom">
-                                    <a href="#" class="dropdown-item p-3 text-wrap"
-                                        th:classappend="${!n.leida ? 'bg-light' : ''}"
-                                        th:style="'border-left: 4px solid ' + (${n.leida} ? 'transparent' : '#0d6efd') + ';'">
-                                        <div class="d-flex justify-content-between mb-1">
-                                            <strong class="text-dark small" th:text="${n.titulo}">Título</strong>
-                                            <small class="text-muted" style="font-size: 0.7rem;"
-                                                th:text="${#temporals.format(n.fechaCreacion, 'dd/MM HH:mm')}"></small>
-                                        </div>
-                                        <p class="mb-0 text-secondary small lh-sm" th:text="${n.mensaje}"></p>
-                                    </a>
-                                </li>
-                            </div>
-                            <li class="p-2 bg-light text-center border-top">
-                                <a class="text-decoration-none small fw-bold text-primary"
-                                    th:href="@{/notificaciones}">Ver
-                                    Historial Completo</a>
-                            </li>
-                        </ul>
-                    </li>
-
-                    <li class="d-none d-lg-block border-start border-secondary mx-2" style="height: 25px;"></li>
-
-                    <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle d-flex align-items-center gap-2 text-white" href="#"
-                            data-bs-toggle="dropdown">
-                            <img th:src="@{/assets/avatar_default.png}" width="38" height="38"
-                                class="rounded-circle border border-2 border-primary shadow-sm">
-                            <div class="d-none d-lg-block text-start lh-1">
-                                <span class="d-block fw-bold" style="font-size: 0.85rem;">Mi Cuenta</span>
-                                <span class="d-block text-white-50" style="font-size: 0.7rem;">Admin</span>
-                            </div>
-                        </a>
-                        <ul class="dropdown-menu dropdown-menu-end shadow-lg rounded-4 border-0 dropdown-menu-animate p-2"
-                            style="min-width: 200px;">
+                        <ul class="dropdown-menu dropdown-menu-end dropdown-menu-dark shadow border-secondary">
+                            <li><a class="dropdown-item" href="#"><i class="bi bi-person me-2"></i> Perfil</a></li>
                             <li>
-                                <h6 class="dropdown-header text-uppercase small fw-bold text-muted">Configuración</h6>
-                            </li>
-                            <li><a class="dropdown-item rounded-3 py-2" href="#"><i
-                                        class="bi bi-person me-2 text-primary"></i> Mi Perfil</a></li>
-                            <li><a class="dropdown-item rounded-3 py-2" th:href="@{/admin/usuarios}"><i
-                                        class="bi bi-gear me-2 text-primary"></i> Gestionar Usuarios</a></li>
-                            <li>
-                                <hr class="dropdown-divider my-2">
+                                <hr class="dropdown-divider">
                             </li>
                             <li>
                                 <form th:action="@{/logout}" method="post">
-                                    <button type="submit"
-                                        class="dropdown-item rounded-3 py-2 text-danger fw-semibold bg-danger-subtle border-0 w-100 text-start">
-                                        <i class="bi bi-box-arrow-right me-2"></i> Cerrar Sesión
-                                    </button>
+                                    <button type="submit" class="dropdown-item text-danger fw-bold"><i
+                                            class="bi bi-box-arrow-right me-2"></i> Salir</button>
                                 </form>
                             </li>
                         </ul>
-                    </li>
-                </ul>
+                    </div>
+                </div>
             </div>
         </div>
     </nav>
@@ -138,7 +219,6 @@
         <div class="row justify-content-center">
             <div class="col-lg-10">
                 <div class="card shadow-lg border-0 rounded-4 overflow-hidden">
-
                     <div class="card-header bg-white py-4 px-5 border-bottom">
                         <div class="d-flex align-items-center">
                             <div class="bg-primary bg-opacity-10 text-primary p-3 rounded-circle me-3">
@@ -146,7 +226,8 @@
                             </div>
                             <div>
                                 <h4 class="fw-bold text-dark mb-0">Registrar Nueva Máquina</h4>
-                                <p class="text-muted small mb-0">Ingrese los datos técnicos y operativos del equipo.</p>
+                                <p class="text-muted small mb-0">Ingrese los datos técnicos y operativos (Nombre máx.
+                                    30, Modelo máx. 20 chars).</p>
                             </div>
                         </div>
                     </div>
@@ -159,17 +240,22 @@
                                 <div class="card-body p-4">
                                     <h6 class="fw-bold text-secondary mb-3 border-bottom pb-2">1. Identificación del
                                         Equipo</h6>
-
                                     <div class="row g-4">
+
                                         <div class="col-md-6">
                                             <label class="form-label fw-semibold text-dark">Nombre de la Máquina</label>
                                             <div class="input-group">
                                                 <span class="input-group-text bg-white border-end-0 text-muted"><i
                                                         class="bi bi-tag"></i></span>
-                                                <input type="text" th:field="*{nombre}" required
+                                                <input type="text" th:field="*{nombre}" required maxlength="30"
                                                     class="form-control border-start-0 shadow-none"
+                                                    th:classappend="${#fields.hasErrors('nombre')} ? 'is-invalid'"
                                                     placeholder="Ej: Compresor Alpha 3000">
-                                                <div class="invalid-feedback">El nombre es obligatorio.</div>
+                                                <div class="invalid-feedback" th:if="${#fields.hasErrors('nombre')}"
+                                                    th:errors="*{nombre}"></div>
+                                                <div class="invalid-feedback"
+                                                    th:unless="${#fields.hasErrors('nombre')}">El nombre es obligatorio
+                                                    (máx. 30 caracteres).</div>
                                             </div>
                                         </div>
 
@@ -178,10 +264,15 @@
                                             <div class="input-group">
                                                 <span class="input-group-text bg-white border-end-0 text-muted"><i
                                                         class="bi bi-qr-code"></i></span>
-                                                <input type="text" th:field="*{modelo}" required
+                                                <input type="text" th:field="*{modelo}" required maxlength="20"
                                                     class="form-control border-start-0 shadow-none"
+                                                    th:classappend="${#fields.hasErrors('modelo')} ? 'is-invalid'"
                                                     placeholder="Ej: A3000-X">
-                                                <div class="invalid-feedback">El modelo es obligatorio.</div>
+                                                <div class="invalid-feedback" th:if="${#fields.hasErrors('modelo')}"
+                                                    th:errors="*{modelo}"></div>
+                                                <div class="invalid-feedback"
+                                                    th:unless="${#fields.hasErrors('modelo')}">El modelo es obligatorio
+                                                    (máx. 20 caracteres).</div>
                                             </div>
                                         </div>
 
@@ -190,10 +281,12 @@
                                             <div class="input-group">
                                                 <span class="input-group-text bg-white border-end-0 text-muted"><i
                                                         class="bi bi-geo-alt"></i></span>
-                                                <input type="text" th:field="*{ubicacion}" required
+                                                <input type="text" th:field="*{ubicacion}" required maxlength="50"
                                                     class="form-control border-start-0 shadow-none"
+                                                    th:classappend="${#fields.hasErrors('ubicacion')} ? 'is-invalid'"
                                                     placeholder="Ej: Planta Norte - Línea de producción 2">
-                                                <div class="invalid-feedback">La ubicación es obligatoria.</div>
+                                                <div class="invalid-feedback" th:errors="*{ubicacion}">La ubicación es
+                                                    obligatoria.</div>
                                             </div>
                                         </div>
                                     </div>
@@ -204,7 +297,6 @@
                                 <div class="card-body p-4">
                                     <h6 class="fw-bold text-secondary mb-3 border-bottom pb-2">2. Configuración
                                         Operativa</h6>
-
                                     <div class="row g-4">
                                         <div class="col-md-4">
                                             <label class="form-label fw-semibold text-dark">Último Mantenimiento</label>
@@ -212,8 +304,10 @@
                                                 <span class="input-group-text bg-white border-end-0 text-muted"><i
                                                         class="bi bi-calendar-check"></i></span>
                                                 <input type="date" th:field="*{fechaUltimoMantenimiento}" required
-                                                    class="form-control border-start-0 shadow-none">
-                                                <div class="invalid-feedback">Seleccione una fecha.</div>
+                                                    class="form-control border-start-0 shadow-none"
+                                                    th:classappend="${#fields.hasErrors('fechaUltimoMantenimiento')} ? 'is-invalid'">
+                                                <div class="invalid-feedback" th:errors="*{fechaUltimoMantenimiento}">
+                                                    Seleccione una fecha válida.</div>
                                             </div>
                                         </div>
 
@@ -223,11 +317,12 @@
                                                 <span class="input-group-text bg-white border-end-0 text-muted"><i
                                                         class="bi bi-arrow-repeat"></i></span>
                                                 <input type="number" th:field="*{intervaloMantenimiento}" required
-                                                    class="form-control border-start-0 shadow-none" placeholder="Ej: 30"
-                                                    min="1">
-                                                <div class="invalid-feedback">Ingrese el intervalo en días.</div>
+                                                    min="1" max="365" class="form-control border-start-0 shadow-none"
+                                                    th:classappend="${#fields.hasErrors('intervaloMantenimiento')} ? 'is-invalid'"
+                                                    placeholder="Ej: 30">
+                                                <div class="invalid-feedback" th:errors="*{intervaloMantenimiento}">
+                                                    Rango permitido: 1 - 365 días.</div>
                                             </div>
-                                            <div class="form-text small">Días para generar alerta automática.</div>
                                         </div>
 
                                         <div class="col-md-4">
@@ -236,13 +331,15 @@
                                                 <span class="input-group-text bg-white border-end-0 text-muted"><i
                                                         class="bi bi-toggle-on"></i></span>
                                                 <select th:field="*{estado}" required
-                                                    class="form-select border-start-0 shadow-none">
+                                                    class="form-select border-start-0 shadow-none"
+                                                    th:classappend="${#fields.hasErrors('estado')} ? 'is-invalid'">
                                                     <option value="" selected disabled>Seleccione...</option>
                                                     <option value="Activo">Activo</option>
                                                     <option value="Inactivo">Inactivo</option>
                                                     <option value="En mantenimiento">En mantenimiento</option>
                                                 </select>
-                                                <div class="invalid-feedback">Seleccione el estado.</div>
+                                                <div class="invalid-feedback" th:errors="*{estado}">Seleccione un
+                                                    estado.</div>
                                             </div>
                                         </div>
                                     </div>
@@ -250,9 +347,8 @@
                             </div>
 
                             <div class="d-flex justify-content-end align-items-center gap-3 pt-2">
-                                <a th:href="@{/maquinas}" class="btn btn-link text-decoration-none text-secondary">
-                                    Cancelar
-                                </a>
+                                <a th:href="@{/maquinas}"
+                                    class="btn btn-link text-decoration-none text-secondary">Cancelar</a>
                                 <button type="submit" class="btn btn-success px-5 rounded-pill shadow-sm fw-bold">
                                     <i class="bi bi-check-lg me-2"></i>Guardar Máquina
                                 </button>
@@ -264,46 +360,14 @@
             </div>
         </div>
     </div>
-    <footer class="mt-auto pt-5 pb-4 text-light" style="background-color:#4B4F54; border-top:3px solid #f97316;">
-        <div class="container text-md-start">
-            <div class="row">
-                <div class="col-md-3 mb-4">
-                    <h5 class="text-uppercase fw-bold mb-3 text-white"><i class="bi bi-shield-lock-fill me-2"
-                            style="color:#f97316;"></i>MaqGuard</h5>
-                    <p class="small" style="color:#94a3b8;">Panel de Administración Central. Control total sobre activos
-                        e industria.</p>
-                </div>
-                <div class="col-md-3 mb-4">
-                    <h6 class="text-uppercase fw-bold mb-3" style="font-size:0.8rem;color:#f97316;">Gestión</h6>
-                    <ul class="list-unstyled">
-                        <li><a th:href="@{/maquinas}" class="hover-link" style="color:#94a3b8;">Máquinas</a></li>
-                        <li><a th:href="@{/inventario}" class="hover-link" style="color:#94a3b8;">Inventario</a></li>
-                    </ul>
-                </div>
-                <div class="col-md-3 mb-4">
-                    <h6 class="text-uppercase fw-bold mb-3" style="font-size:0.8rem;color:#f97316;">Supervisión</h6>
-                    <ul class="list-unstyled">
-                        <li><a th:href="@{/alertas}" class="hover-link" style="color:#94a3b8;">Alertas</a></li>
-                        <li><a th:href="@{/notificaciones}" class="hover-link" style="color:#94a3b8;">Notificaciones</a>
-                        </li>
-                    </ul>
-                </div>
-                <div class="col-md-3 mb-4">
-                    <h6 class="text-uppercase fw-bold mb-3" style="font-size:0.8rem;color:#f97316;">Ayuda</h6>
-                    <div class="d-flex gap-3"><a href="#" class="hover-icon text-secondary"><i
-                                class="bi bi-github fs-5"></i></a></div>
-                </div>
-            </div>
-            <hr style="border-color:#1e293b;">
-            <div class="row">
-                <div class="col-md-12 text-center">
-                    <p class="small mb-0" style="color:#94a3b8;">© 2026 <strong style="color:#f97316;">MaqGuard
-                            Enterprise</strong>.</p>
-                </div>
-            </div>
+    <footer class="mt-auto py-4 text-light" style="background-color:#1a1a1a; border-top:3px solid #f97316;">
+        <div class="container text-center">
+            <h6 class="fw-bold mb-1">MAQGUARD <span style="color: #f97316;">ENTERPRISE</span></h6>
+            <p class="small text-white-50 mb-0">© 2026 Soluciones de Gestión Industrial. Bogotá, Colombia.</p>
         </div>
     </footer>
 
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
     <script>
         (() => {
             'use strict'
@@ -319,7 +383,6 @@
             })
         })()
     </script>
-
 </body>
 
 </html>
