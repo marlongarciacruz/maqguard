@@ -5,12 +5,15 @@ import com.proyectogaes.repository.MaquinasRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.xssf.usermodel.*;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.validation.Valid;
+
 import java.io.IOException;
 import java.time.format.DateTimeFormatter;
 import java.time.LocalDate;
@@ -47,13 +50,38 @@ public class MaquinasController {
     }
 
     @PostMapping("/guardar")
-    public String guardar(@ModelAttribute Maquina maquina, RedirectAttributes flash) {
-        try {
-            repository.save(maquina);
-            flash.addFlashAttribute("success", "Operación realizada con éxito");
-        } catch (Exception e) {
-            flash.addFlashAttribute("error", "Error al procesar la solicitud: " + e.getMessage());
+    public String guardar(@Valid @ModelAttribute("maquina") Maquina maquina,
+            BindingResult result,
+            Model model,
+            RedirectAttributes flash) {
+
+        boolean isEdicion = maquina.getId_maquina() != null;
+
+        // 1. VALIDACIÓN DE NOMBRE
+        boolean nombreExiste = isEdicion
+                ? repository.validarNombreDuplicado(maquina.getNombre(), maquina.getId_maquina())
+                : repository.existsByNombre(maquina.getNombre());
+
+        if (nombreExiste) {
+            result.rejectValue("nombre", "error.maquina", "Este nombre de máquina ya existe.");
         }
+
+        // 2. VALIDACIÓN DE MODELO
+        boolean modeloExiste = isEdicion
+                ? repository.validarModeloDuplicado(maquina.getModelo(), maquina.getId_maquina())
+                : repository.existsByModelo(maquina.getModelo());
+
+        if (modeloExiste) {
+            result.rejectValue("modelo", "error.maquina", "Este modelo/serie ya está registrado.");
+        }
+
+        // 3. REVISAR ERRORES (Validaciones @Size, @NotBlank y Duplicados)
+        if (result.hasErrors()) {
+            return isEdicion ? "maquinasadmin/editar" : "maquinasadmin/crear";
+        }
+
+        repository.save(maquina);
+        flash.addFlashAttribute("success", "Operación realizada con éxito");
         return "redirect:/maquinas";
     }
 
