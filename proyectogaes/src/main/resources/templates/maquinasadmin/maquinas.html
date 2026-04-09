@@ -12,15 +12,18 @@
 
 <body class="d-flex flex-column min-vh-100">
 
-    <nav class="navbar navbar-expand-lg navbar-dark sticky-top" style="background-color:#1a1a1a; border-bottom:3px solid #f97316;">
+    <nav class="navbar navbar-expand-lg navbar-dark sticky-top"
+        style="background-color:#1a1a1a; border-bottom:3px solid #f97316;">
         <div class="container">
             <a class="navbar-brand d-flex align-items-center me-5" th:href="@{/inicio}">
-                <div class="bg-white rounded-circle p-1 me-2 d-flex align-items-center justify-content-center" style="width: 40px; height: 40px;">
+                <div class="bg-white rounded-circle p-1 me-2 d-flex align-items-center justify-content-center"
+                    style="width: 40px; height: 40px;">
                     <img th:src="@{/assets/maqguard-icon.png}" width="28" height="28" alt="Logo">
                 </div>
                 <div class="lh-1">
                     <span class="d-block fw-bold text-white small" style="letter-spacing: 1px;">MAQGUARD</span>
-                    <span class="d-block text-orange fw-bold" style="font-size: 0.65rem; color: #f97316;">ADMIN PANEL</span>
+                    <span class="d-block text-orange fw-bold" style="font-size: 0.65rem; color: #f97316;">ADMIN
+                        PANEL</span>
                 </div>
             </a>
 
@@ -30,24 +33,30 @@
 
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav me-auto mb-2 mb-lg-0 gap-3">
-                    <li class="nav-item"><a class="nav-link" th:href="@{/inicio}"><i class="bi bi-house-door"></i> Inicio</a></li>
-                    <li class="nav-item"><a class="nav-link" th:href="@{/maquinas}"><i class="bi bi-cpu"></i> Máquinas</a></li>
-                    <li class="nav-item"><a class="nav-link active text-orange" th:href="@{/inventario}"><i class="bi bi-box-seam"></i> Inventario</a></li>
-                    <li class="nav-item"><a class="nav-link" th:href="@{/mantenimientos}"><i class="bi bi-tools"></i> Mantenimiento</a></li>
-                    <li class="nav-item"><a class="nav-link" th:href="@{/alertas}"><i class="bi bi-exclamation-triangle"></i> Alertas</a></li>
+                    <li class="nav-item"><a class="nav-link" th:href="@{/inicio}"><i class="bi bi-house-door"></i>
+                            Inicio</a></li>
+                    <li class="nav-item"><a class="nav-link" th:href="@{/maquinas}"><i class="bi bi-cpu"></i>
+                            Máquinas</a></li>
+                    <li class="nav-item"><a class="nav-link active text-orange" th:href="@{/inventario}"><i
+                                class="bi bi-box-seam"></i> Inventario</a></li>
+                    <li class="nav-item"><a class="nav-link" th:href="@{/mantenimientos}"><i class="bi bi-tools"></i>
+                            Mantenimiento</a></li>
+                    <li class="nav-item"><a class="nav-link" th:href="@{/alertas}"><i
+                                class="bi bi-exclamation-triangle"></i> Alertas</a></li>
                 </ul>
             </div>
         </div>
     </nav>
 
     <main class="container py-5 flex-grow-1">
-        
+
         <div class="d-flex justify-content-between align-items-center mb-4">
             <div>
                 <h2 class="fw-bold text-dark mb-1">Inventario de Maquinaria</h2>
                 <p class="text-muted mb-0 small">Gestión operativa y técnica del parque industrial.</p>
             </div>
-            <a th:href="@{/maquinas/crear}" class="btn btn-primary rounded-pill px-4 shadow-sm fw-bold" style="background-color: #f97316; border: none;">
+            <a th:href="@{/maquinas/crear}" class="btn btn-primary rounded-pill px-4 shadow-sm fw-bold"
+                style="background-color: #f97316; border: none;">
                 <i class="bi bi-plus-lg me-2"></i>Nueva Máquina
             </a>
         </div>
@@ -56,8 +65,10 @@
             <div class="row g-3">
                 <div class="col-lg-4 col-md-12">
                     <div class="input-group">
-                        <span class="input-group-text bg-white border-end-0" style="border-radius: 50px 0 0 50px;"><i class="bi bi-search text-muted"></i></span>
-                        <input type="text" id="buscador" class="form-control border-start-0 py-2" placeholder="Buscar por nombre, modelo o ID..." style="border-radius: 0 50px 50px 0;">
+                        <span class="input-group-text bg-white border-end-0" style="border-radius: 50px 0 0 50px;"><i
+                                class="bi bi-search text-muted"></i></span>
+                        <input type="text" id="buscador" class="form-control border-start-0 py-2"
+                            placeholder="Buscar por nombre, modelo o ID..." style="border-radius: 0 50px 50px 0;">
                     </div>
                 </div>
 
@@ -76,9 +87,9 @@
                         <option th:each="ubi : ${ubicaciones}" th:value="${ubi}" th:text="${ubi}"></option>
                     </select>
                 </div>
-
                 <div class="col-lg-2 col-md-4">
-                    <a th:href="@{/maquinas/exportarExcel}" class="btn btn-outline-success rounded-pill w-100 py-2 fw-bold">
+                    <a id="btnExportar" th:href="@{/maquinas/exportarExcel}"
+                        class="btn btn-outline-success rounded-pill w-100 py-2 fw-bold">
                         <i class="bi bi-file-earmark-excel me-2"></i>Exportar
                     </a>
                 </div>
@@ -106,27 +117,38 @@
                                     </div>
                                     <div>
                                         <h6 class="mb-0 fw-bold text-dark nombre-maquina" th:text="${maq.nombre}"></h6>
-                                        <small class="text-muted modelo-maquina" th:text="'ID: ' + ${maq.id_maquina} + ' | Mod: ' + ${maq.modelo}"></small>
+                                        <small class="text-muted modelo-maquina"
+                                            th:text="'ID: ' + ${maq.id_maquina} + ' | Mod: ' + ${maq.modelo}"></small>
                                     </div>
                                 </div>
                             </td>
                             <td class="py-3">
-                                <span class="badge bg-light text-dark border rounded-pill px-3 ubicacion-val" th:text="${maq.ubicacion}"></span>
+                                <span class="badge bg-light text-dark border rounded-pill px-3 ubicacion-val"
+                                    th:text="${maq.ubicacion}"></span>
                             </td>
                             <td class="py-3">
                                 <div th:if="${maq.fechaProximoMantenimiento != null}">
-                                    <span class="small fw-bold d-block text-dark" th:text="${#temporals.format(maq.fechaProximoMantenimiento, 'dd MMM, yyyy')}"></span>
-                                    <small class="text-muted" th:text="'Restan ' + ${T(java.time.temporal.ChronoUnit).DAYS.between(T(java.time.LocalDate).now(), maq.fechaProximoMantenimiento)} + ' días'"></small>
+                                    <span class="small fw-bold d-block text-dark"
+                                        th:text="${#temporals.format(maq.fechaProximoMantenimiento, 'dd MMM, yyyy')}"></span>
+                                    <small class="text-muted"
+                                        th:text="'Restan ' + ${T(java.time.temporal.ChronoUnit).DAYS.between(T(java.time.LocalDate).now(), maq.fechaProximoMantenimiento)} + ' días'"></small>
                                 </div>
-                                <span th:if="${maq.fechaProximoMantenimiento == null}" class="text-muted small fst-italic">Sin programar</span>
+                                <span th:if="${maq.fechaProximoMantenimiento == null}"
+                                    class="text-muted small fst-italic">Sin programar</span>
                             </td>
                             <td class="text-center py-3">
-                                <span th:class="'badge rounded-pill px-3 py-2 border estado-val ' + (${maq.estado == 'Activo' ? 'bg-success bg-opacity-10 text-success border-success' : 'bg-secondary bg-opacity-10 text-secondary border-secondary'})"
-                                      th:text="${maq.estado}"></span>
+                                <span
+                                    th:class="'badge rounded-pill px-3 py-2 border estado-val ' + (${maq.estado == 'Activo' ? 'bg-success bg-opacity-10 text-success border-success' : 'bg-secondary bg-opacity-10 text-secondary border-secondary'})"
+                                    th:text="${maq.estado}"></span>
                             </td>
                             <td class="text-end pe-4 py-3">
-                                <a th:href="@{/maquinas/editar/{id}(id=${maq.id_maquina})}" class="btn btn-light btn-sm rounded-circle me-1" title="Editar"><i class="bi bi-pencil-square text-primary"></i></a>
-                                <a th:href="@{/maquinas/eliminar/{id}(id=${maq.id_maquina})}" class="btn btn-light btn-sm rounded-circle" title="Eliminar" onclick="return confirm('¿Confirmar eliminación?')"><i class="bi bi-trash text-danger"></i></a>
+                                <a th:href="@{/maquinas/editar/{id}(id=${maq.id_maquina})}"
+                                    class="btn btn-light btn-sm rounded-circle me-1" title="Editar"><i
+                                        class="bi bi-pencil-square text-primary"></i></a>
+                                <a th:href="@{/maquinas/eliminar/{id}(id=${maq.id_maquina})}"
+                                    class="btn btn-light btn-sm rounded-circle" title="Eliminar"
+                                    onclick="return confirm('¿Confirmar eliminación?')"><i
+                                        class="bi bi-trash text-danger"></i></a>
                             </td>
                         </tr>
                     </tbody>
@@ -143,13 +165,14 @@
     </footer>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
-    
+
     <script>
-        document.addEventListener('DOMContentLoaded', function() {
+        document.addEventListener('DOMContentLoaded', function () {
             const buscador = document.getElementById('buscador');
             const filtroEstado = document.getElementById('filtroEstado');
             const filtroUbicacion = document.getElementById('filtroUbicacion');
             const filas = document.querySelectorAll('.fila-maquina');
+            const btnExportar = document.getElementById('btnExportar');
 
             function filtrar() {
                 const texto = buscador.value.toLowerCase();
@@ -166,12 +189,24 @@
                     const coincideEstado = estado === "" || estVal === estado;
                     const coincideUbicacion = ubicacion === "" || ubiVal === ubicacion;
 
-                    if (coincideTexto && coincideEstado && coincideUbicacion) {
-                        fila.style.display = "";
-                    } else {
-                        fila.style.display = "none";
-                    }
+                    fila.style.display = (coincideTexto && coincideEstado && coincideUbicacion) ? "" : "none";
                 });
+
+                actualizarLinkExportar();
+            }
+
+            function actualizarLinkExportar() {
+                const params = new URLSearchParams();
+                const texto = buscador.value.trim();
+                const estado = filtroEstado.value.trim();
+                const ubi = filtroUbicacion.value.trim();
+
+                if (texto) params.set('nombre', texto);
+                if (estado) params.set('estado', estado);
+                if (ubi) params.set('ubicacion', ubi);
+
+                const query = params.toString();
+                btnExportar.href = '/maquinas/exportarExcel' + (query ? '?' + query : '');
             }
 
             buscador.addEventListener('input', filtrar);
@@ -180,4 +215,5 @@
         });
     </script>
 </body>
+
 </html>

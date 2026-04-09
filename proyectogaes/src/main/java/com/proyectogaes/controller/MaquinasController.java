@@ -76,45 +76,45 @@ public class MaquinasController {
         return "redirect:/maquinas";
     }
 
-    // ─── EXPORTAR EXCEL CON FILTRO MULTICRITERIO ───────────────────────────────
     @GetMapping("/exportarExcel")
     public void exportarExcel(
             @RequestParam(required = false) String nombre,
-            @RequestParam(required = false) String modelo,
             @RequestParam(required = false) String estado,
+            @RequestParam(required = false) String ubicacion,
             HttpServletResponse response) throws IOException {
 
-        // 1. Obtener y filtrar datos
+        // 1. Filtrar datos
         List<Maquina> maquinas = repository.findAll().stream()
                 .filter(m -> nombre == null || nombre.isBlank()
-                        || m.getNombre().toLowerCase().contains(nombre.toLowerCase()))
-                .filter(m -> modelo == null || modelo.isBlank()
-                        || m.getModelo().toLowerCase().contains(modelo.toLowerCase()))
+                        || m.getNombre().toLowerCase().contains(nombre.toLowerCase())
+                        || m.getModelo().toLowerCase().contains(nombre.toLowerCase()))
                 .filter(m -> estado == null || estado.isBlank()
-                        || m.getEstado().toLowerCase().contains(estado.toLowerCase()))
+                        || m.getEstado().equalsIgnoreCase(estado))
+                .filter(m -> ubicacion == null || ubicacion.isBlank()
+                        || m.getUbicacion().equalsIgnoreCase(ubicacion))
                 .collect(Collectors.toList());
 
-        // 2. Configurar respuesta HTTP
+        // 2. Respuesta HTTP
         String fechaActual = LocalDate.now().format(DateTimeFormatter.ofPattern("yyyyMMdd"));
         response.setContentType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
         response.setHeader("Content-Disposition",
-                "attachment; filename=GAES_Maquinas_" + fechaActual + ".xlsx");
+                "attachment; filename=MaqGuard_Inventario_" + fechaActual + ".xlsx");
 
-        // 3. Colores corporativos
-        final String NARANJA    = "FF6B00";
-        final String NEGRO_SUAVE = "1F1F1F";
-        final String BLANCO     = "FFFFFF";
+        // 3. Colores
+        final String NARANJA = "F97316";
+        final String NEGRO_SUAVE = "1A1A1A";
+        final String BLANCO = "FFFFFF";
         final String GRIS_CLARO = "F5F5F5";
         final String GRIS_BORDE = "CCCCCC";
 
         try (XSSFWorkbook workbook = new XSSFWorkbook()) {
-            XSSFSheet sheet = workbook.createSheet("Máquinas");
+            XSSFSheet sheet = workbook.createSheet("Inventario");
 
-            // ── Fila 0-1: Logo / Título del software ────────────────────────
+            // ── Fila 0-1: Header con nombre del sistema ──────────────────────
             sheet.addMergedRegion(new CellRangeAddress(0, 1, 0, 7));
             Row filaLogo = sheet.createRow(0);
-            filaLogo.setHeightInPoints(36);
-            sheet.createRow(1).setHeightInPoints(36);
+            filaLogo.setHeightInPoints(38);
+            sheet.createRow(1).setHeightInPoints(10);
 
             XSSFCellStyle estiloLogo = workbook.createCellStyle();
             estiloLogo.setFillForegroundColor(new XSSFColor(hexToBytes(NEGRO_SUAVE), null));
@@ -123,18 +123,18 @@ public class MaquinasController {
             estiloLogo.setVerticalAlignment(VerticalAlignment.CENTER);
             XSSFFont fuenteLogo = workbook.createFont();
             fuenteLogo.setBold(true);
-            fuenteLogo.setFontHeightInPoints((short) 18);
+            fuenteLogo.setFontHeightInPoints((short) 16);
             fuenteLogo.setColor(new XSSFColor(hexToBytes(NARANJA), null));
             fuenteLogo.setFontName("Arial");
             estiloLogo.setFont(fuenteLogo);
             Cell celdaLogo = filaLogo.createCell(0);
-            celdaLogo.setCellValue("⚙  GAES — Sistema de Gestión de Máquinas");
+            celdaLogo.setCellValue("MAQGUARD  —  Inventario de Maquinaria");
             celdaLogo.setCellStyle(estiloLogo);
 
-            // ── Fila 2: Subtítulo con módulo y fecha ────────────────────────
+            // ── Fila 2: Subtítulo módulo + fecha + filtros ───────────────────
             sheet.addMergedRegion(new CellRangeAddress(2, 2, 0, 7));
             Row filaModulo = sheet.createRow(2);
-            filaModulo.setHeightInPoints(22);
+            filaModulo.setHeightInPoints(20);
 
             XSSFCellStyle estiloModulo = workbook.createCellStyle();
             estiloModulo.setFillForegroundColor(new XSSFColor(hexToBytes(NARANJA), null));
@@ -142,26 +142,24 @@ public class MaquinasController {
             estiloModulo.setAlignment(HorizontalAlignment.LEFT);
             estiloModulo.setVerticalAlignment(VerticalAlignment.CENTER);
             XSSFFont fuenteModulo = workbook.createFont();
-            fuenteModulo.setBold(false);
-            fuenteModulo.setFontHeightInPoints((short) 10);
+            fuenteModulo.setFontHeightInPoints((short) 9);
             fuenteModulo.setColor(new XSSFColor(hexToBytes(BLANCO), null));
             fuenteModulo.setFontName("Arial");
             estiloModulo.setFont(fuenteModulo);
             Cell celdaModulo = filaModulo.createCell(0);
-            String filtrosAplicados = construirDescripcionFiltros(nombre, modelo, estado);
-            celdaModulo.setCellValue("  Módulo: Administración de Máquinas  |  "
+            celdaModulo.setCellValue("  Módulo: Inventario de Maquinaria   |   "
                     + "Exportado: " + LocalDate.now().format(DateTimeFormatter.ofPattern("dd/MM/yyyy"))
-                    + "  |  " + filtrosAplicados);
+                    + "   |   " + construirDescripcionFiltros(nombre, estado, ubicacion));
             celdaModulo.setCellStyle(estiloModulo);
 
             // ── Fila 3: separación ──────────────────────────────────────────
-            sheet.createRow(3).setHeightInPoints(6);
+            sheet.createRow(3).setHeightInPoints(5);
 
-            // ── Fila 4: Encabezados de columna ──────────────────────────────
+            // ── Fila 4: Encabezados ─────────────────────────────────────────
             Row headerRow = sheet.createRow(4);
-            headerRow.setHeightInPoints(20);
-            String[] columnas = {"ID", "Nombre", "Modelo", "Ubicación",
-                    "Último Mantenimiento", "Intervalo (días)", "Próximo Mantenimiento", "Estado"};
+            headerRow.setHeightInPoints(22);
+            String[] columnas = { "ID", "Nombre", "Modelo", "Ubicación",
+                    "Último Manto.", "Intervalo (días)", "Próximo Manto.", "Estado" };
 
             XSSFCellStyle estiloHeader = workbook.createCellStyle();
             estiloHeader.setFillForegroundColor(new XSSFColor(hexToBytes(NARANJA), null));
@@ -171,7 +169,7 @@ public class MaquinasController {
             setBorder(estiloHeader, GRIS_BORDE);
             XSSFFont fuenteHeader = workbook.createFont();
             fuenteHeader.setBold(true);
-            fuenteHeader.setFontHeightInPoints((short) 11);
+            fuenteHeader.setFontHeightInPoints((short) 10);
             fuenteHeader.setColor(new XSSFColor(hexToBytes(BLANCO), null));
             fuenteHeader.setFontName("Arial");
             estiloHeader.setFont(fuenteHeader);
@@ -182,61 +180,56 @@ public class MaquinasController {
                 cell.setCellStyle(estiloHeader);
             }
 
-            // ── Estilos de filas de datos (alternas) ────────────────────────
-            XSSFCellStyle estiloPar      = crearEstiloDato(workbook, BLANCO,     NEGRO_SUAVE, GRIS_BORDE, false);
-            XSSFCellStyle estiloImpar    = crearEstiloDato(workbook, GRIS_CLARO, NEGRO_SUAVE, GRIS_BORDE, false);
-            XSSFCellStyle estiloCentPar  = crearEstiloDato(workbook, BLANCO,     NEGRO_SUAVE, GRIS_BORDE, true);
-            XSSFCellStyle estiloCentImpar= crearEstiloDato(workbook, GRIS_CLARO, NEGRO_SUAVE, GRIS_BORDE, true);
+            // ── Estilos filas alternas ──────────────────────────────────────
+            XSSFCellStyle estiloPar = crearEstiloDato(workbook, BLANCO, NEGRO_SUAVE, GRIS_BORDE, false);
+            XSSFCellStyle estiloImpar = crearEstiloDato(workbook, GRIS_CLARO, NEGRO_SUAVE, GRIS_BORDE, false);
+            XSSFCellStyle estiloCentPar = crearEstiloDato(workbook, BLANCO, NEGRO_SUAVE, GRIS_BORDE, true);
+            XSSFCellStyle estiloCentImpar = crearEstiloDato(workbook, GRIS_CLARO, NEGRO_SUAVE, GRIS_BORDE, true);
 
-            // ── Datos ────────────────────────────────────────────────────────
+            // ── Datos ───────────────────────────────────────────────────────
             int rowNum = 5;
             DateTimeFormatter fmt = DateTimeFormatter.ofPattern("dd/MM/yyyy");
             for (Maquina maq : maquinas) {
                 Row row = sheet.createRow(rowNum);
                 row.setHeightInPoints(18);
                 boolean par = (rowNum % 2 == 0);
-                XSSFCellStyle estiloBase = par ? estiloPar    : estiloImpar;
-                XSSFCellStyle estiloCent = par ? estiloCentPar : estiloCentImpar;
+                XSSFCellStyle base = par ? estiloPar : estiloImpar;
+                XSSFCellStyle cent = par ? estiloCentPar : estiloCentImpar;
 
-                Cell c0 = row.createCell(0);
-                c0.setCellValue(maq.getId_maquina());
-                c0.setCellStyle(estiloCent);
+                row.createCell(0).setCellValue(maq.getId_maquina());
+                row.getCell(0).setCellStyle(cent);
 
-                Cell c1 = row.createCell(1);
-                c1.setCellValue(maq.getNombre());
-                c1.setCellStyle(estiloBase);
+                row.createCell(1).setCellValue(maq.getNombre());
+                row.getCell(1).setCellStyle(base);
 
-                Cell c2 = row.createCell(2);
-                c2.setCellValue(maq.getModelo());
-                c2.setCellStyle(estiloBase);
+                row.createCell(2).setCellValue(maq.getModelo());
+                row.getCell(2).setCellStyle(base);
 
-                Cell c3 = row.createCell(3);
-                c3.setCellValue(maq.getUbicacion());
-                c3.setCellStyle(estiloBase);
+                row.createCell(3).setCellValue(maq.getUbicacion());
+                row.getCell(3).setCellStyle(base);
 
-                Cell c4 = row.createCell(4);
-                c4.setCellValue(maq.getFechaUltimoMantenimiento() != null
-                        ? maq.getFechaUltimoMantenimiento().format(fmt) : "—");
-                c4.setCellStyle(estiloCent);
+                row.createCell(4).setCellValue(maq.getFechaUltimoMantenimiento() != null
+                        ? maq.getFechaUltimoMantenimiento().format(fmt)
+                        : "—");
+                row.getCell(4).setCellStyle(cent);
 
-                Cell c5 = row.createCell(5);
-                c5.setCellValue(maq.getIntervaloMantenimiento() != null
-                        ? maq.getIntervaloMantenimiento() : 0);
-                c5.setCellStyle(estiloCent);
+                row.createCell(5).setCellValue(maq.getIntervaloMantenimiento() != null
+                        ? maq.getIntervaloMantenimiento()
+                        : 0);
+                row.getCell(5).setCellStyle(cent);
 
-                Cell c6 = row.createCell(6);
-                c6.setCellValue(maq.getFechaProximoMantenimiento() != null
-                        ? maq.getFechaProximoMantenimiento().format(fmt) : "—");
-                c6.setCellStyle(estiloCent);
+                row.createCell(6).setCellValue(maq.getFechaProximoMantenimiento() != null
+                        ? maq.getFechaProximoMantenimiento().format(fmt)
+                        : "—");
+                row.getCell(6).setCellStyle(cent);
 
-                Cell c7 = row.createCell(7);
-                c7.setCellValue(maq.getEstado());
-                c7.setCellStyle(aplicarEstiloEstado(workbook, maq.getEstado(), par, GRIS_CLARO));
+                row.createCell(7).setCellValue(maq.getEstado());
+                row.getCell(7).setCellStyle(aplicarEstiloEstado(workbook, maq.getEstado(), par, GRIS_CLARO));
 
                 rowNum++;
             }
 
-            // ── Fila de totales ──────────────────────────────────────────────
+            // ── Fila total ──────────────────────────────────────────────────
             rowNum++;
             Row filaTotales = sheet.createRow(rowNum);
             filaTotales.setHeightInPoints(18);
@@ -272,8 +265,8 @@ public class MaquinasController {
             celdaTotal.setCellValue(maquinas.size());
             celdaTotal.setCellStyle(estiloTotalNum);
 
-            // ── Anchos de columna fijos ──────────────────────────────────────
-            int[] anchos = {10, 25, 20, 22, 22, 18, 22, 15};
+            // ── Anchos ─────────────────────────────────────────────────────
+            int[] anchos = { 8, 24, 20, 20, 20, 16, 20, 14 };
             for (int i = 0; i < anchos.length; i++) {
                 sheet.setColumnWidth(i, anchos[i] * 256);
             }
@@ -282,13 +275,13 @@ public class MaquinasController {
         }
     }
 
-    // ── Métodos auxiliares ────────────────────────────────────────────────────
+    // ── Auxiliares (van fuera del método, dentro de la clase) ─────────────────
 
     private byte[] hexToBytes(String hex) {
-        return new byte[]{
-            (byte) Integer.parseInt(hex.substring(0, 2), 16),
-            (byte) Integer.parseInt(hex.substring(2, 4), 16),
-            (byte) Integer.parseInt(hex.substring(4, 6), 16)
+        return new byte[] {
+                (byte) Integer.parseInt(hex.substring(0, 2), 16),
+                (byte) Integer.parseInt(hex.substring(2, 4), 16),
+                (byte) Integer.parseInt(hex.substring(4, 6), 16)
         };
     }
 
@@ -330,32 +323,33 @@ public class MaquinasController {
         font.setBold(true);
         if (estado != null) {
             switch (estado.toLowerCase()) {
-                case "activo"        -> font.setColor(new XSSFColor(hexToBytes("1A7A30"), null));
-                case "inactivo"      -> font.setColor(new XSSFColor(hexToBytes("CC0000"), null));
-                case "mantenimiento" -> font.setColor(new XSSFColor(hexToBytes("FF6B00"), null));
-                default              -> font.setColor(new XSSFColor(hexToBytes("1F1F1F"), null));
+                case "activo" -> font.setColor(new XSSFColor(hexToBytes("1A7A30"), null));
+                case "inactivo" -> font.setColor(new XSSFColor(hexToBytes("CC0000"), null));
+                case "mantenimiento" -> font.setColor(new XSSFColor(hexToBytes("F97316"), null));
+                default -> font.setColor(new XSSFColor(hexToBytes("1A1A1A"), null));
             }
         }
         cs.setFont(font);
         return cs;
     }
 
-    private String construirDescripcionFiltros(String nombre, String modelo, String estado) {
+    private String construirDescripcionFiltros(String nombre, String estado, String ubicacion) {
         StringBuilder sb = new StringBuilder("Filtros: ");
         boolean alguno = false;
         if (nombre != null && !nombre.isBlank()) {
-            sb.append("Nombre=\"").append(nombre).append("\"  ");
-            alguno = true;
-        }
-        if (modelo != null && !modelo.isBlank()) {
-            sb.append("Modelo=\"").append(modelo).append("\"  ");
+            sb.append("Búsqueda=\"").append(nombre).append("\"  ");
             alguno = true;
         }
         if (estado != null && !estado.isBlank()) {
             sb.append("Estado=\"").append(estado).append("\"  ");
             alguno = true;
         }
-        if (!alguno) sb.append("Ninguno (todas las máquinas)");
+        if (ubicacion != null && !ubicacion.isBlank()) {
+            sb.append("Ubicación=\"").append(ubicacion).append("\"  ");
+            alguno = true;
+        }
+        if (!alguno)
+            sb.append("Ninguno (todas las máquinas)");
         return sb.toString().trim();
     }
 }
