@@ -10,12 +10,13 @@ import java.util.Optional;
 @Repository
 public interface UsuarioRepository extends JpaRepository<Usuario, Integer> {
 
-    // Funciona directo porque el campo en la entidad se llama 'username'
+    // Este es el método que Spring sí entiende
     Optional<Usuario> findByUsername(String username);
 
-    // Buscar por estado (Activo / Inactivo)
     List<Usuario> findByEstado(String estado);
 
-    // Buscar por rol
+    // Ajustado para que coincida con la relación en la entidad
+
     List<Usuario> findByRolId(int idRol);
+    // BORRA cualquier método que se llame findByUsuario(...)
 }
