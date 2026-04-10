@@ -42,3 +42,28 @@ body {
 .badge-baja {
     background-color: gray;
 }
+
+/* Estilos para el menú de acciones */
+
+.acciones-menu {
+    display: none;
+    position: fixed;   /* fixed para salir de cualquier overflow */
+    background: #fff;
+    min-width: 200px;
+    z-index: 9999;
+    border: 1px solid rgba(0,0,0,.08);
+}
+.acciones-menu.show { display: block; }
+.acciones-item {
+    display: flex;
+    align-items: center;
+    padding: 8px 16px;
+    font-size: .875rem;
+    color: #212529;
+    background: none;
+    border: none;
+    width: 100%;
+    cursor: pointer;
+    text-decoration: none;
+}
+.acciones-item:hover { background-color: #f8f9fa; }
