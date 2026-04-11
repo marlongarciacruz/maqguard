@@ -24,4 +24,5 @@ public interface MaquinasRepository extends JpaRepository<Maquina, Long> {
     
     @Query("SELECT COUNT(m) > 0 FROM Maquina m WHERE m.modelo = :modelo AND m.id_maquina != :id")
     boolean modeloExisteEnOtro(@Param("modelo") String modelo, @Param("id") Long id);
+    long countByEstado(String estado);
 }

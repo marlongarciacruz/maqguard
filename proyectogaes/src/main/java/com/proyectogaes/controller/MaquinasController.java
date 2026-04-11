@@ -50,41 +50,41 @@ public class MaquinasController {
     }
 
     @PostMapping("/guardar")
-public String guardar(@Valid @ModelAttribute("maquina") Maquina maquina, 
-                      BindingResult result, 
-                      Model model, 
-                      RedirectAttributes flash) {
-    
-    boolean isEdicion = maquina.getId_maquina() != null;
+    public String guardar(@Valid @ModelAttribute("maquina") Maquina maquina,
+            BindingResult result,
+            Model model,
+            RedirectAttributes flash) {
 
-    // 1. VALIDACIÓN DE NOMBRE
-    boolean nombreDuplicado = isEdicion
-            ? repository.nombreExisteEnOtro(maquina.getNombre(), maquina.getId_maquina())
-            : repository.nombreExiste(maquina.getNombre());
+        boolean isEdicion = maquina.getId_maquina() != null;
 
-    if (nombreDuplicado) {
-        result.rejectValue("nombre", "error.maquina", "Este nombre de máquina ya existe.");
+        // 1. VALIDACIÓN DE NOMBRE
+        boolean nombreDuplicado = isEdicion
+                ? repository.nombreExisteEnOtro(maquina.getNombre(), maquina.getId_maquina())
+                : repository.nombreExiste(maquina.getNombre());
+
+        if (nombreDuplicado) {
+            result.rejectValue("nombre", "error.maquina", "Este nombre de máquina ya existe.");
+        }
+
+        // 2. VALIDACIÓN DE MODELO
+        boolean modeloDuplicado = isEdicion
+                ? repository.modeloExisteEnOtro(maquina.getModelo(), maquina.getId_maquina())
+                : repository.modeloExiste(maquina.getModelo());
+
+        if (modeloDuplicado) {
+            result.rejectValue("modelo", "error.maquina", "Este modelo ya está registrado.");
+        }
+
+        // 3. SI HAY ERRORES, REGRESAR AL FORMULARIO
+        if (result.hasErrors()) {
+            // Importante: no redirigir, devolver la vista para mostrar los mensajes rojos
+            return isEdicion ? "maquinasadmin/editar" : "maquinasadmin/crear";
+        }
+
+        repository.save(maquina);
+        flash.addFlashAttribute("success", "Datos guardados correctamente en MaqGuard.");
+        return "redirect:/maquinas";
     }
-
-    // 2. VALIDACIÓN DE MODELO
-    boolean modeloDuplicado = isEdicion
-            ? repository.modeloExisteEnOtro(maquina.getModelo(), maquina.getId_maquina())
-            : repository.modeloExiste(maquina.getModelo());
-
-    if (modeloDuplicado) {
-        result.rejectValue("modelo", "error.maquina", "Este modelo ya está registrado.");
-    }
-
-    // 3. SI HAY ERRORES, REGRESAR AL FORMULARIO
-    if (result.hasErrors()) {
-        // Importante: no redirigir, devolver la vista para mostrar los mensajes rojos
-        return isEdicion ? "maquinasadmin/editar" : "maquinasadmin/crear";
-    }
-
-    repository.save(maquina);
-    flash.addFlashAttribute("success", "Datos guardados correctamente en MaqGuard.");
-    return "redirect:/maquinas";
-}
 
     @GetMapping("/editar/{id}")
     public String editar(@PathVariable("id") Long id, Model model) {
