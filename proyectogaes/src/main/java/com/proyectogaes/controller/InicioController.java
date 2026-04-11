@@ -48,10 +48,12 @@ public class InicioController {
             return "redirect:/login";
         }
 
-        // 2. Cargar datos del usuario logueado para el MODAL DE PERF
-        // REEMPLAZA LA LÍNEA 52 Y 53 POR ESTO:
+        // 2. Cargar datos del usuario logueado para el MODAL DE PERFIL
+        // Ejemplo si cambiaste el nombre del método
+        // Agregamos .orElse(null) al final
         Usuario usuarioSesion = usuarioRepository.findByUsername(authentication.getName()).orElse(null);
         model.addAttribute("usuarioSesion", usuarioSesion);
+
         // 3. Identificación de Roles
         boolean isAdmin = authentication.getAuthorities().stream()
                 .anyMatch(a -> a.getAuthority().equals("ROLE_ADMINISTRADOR"));
