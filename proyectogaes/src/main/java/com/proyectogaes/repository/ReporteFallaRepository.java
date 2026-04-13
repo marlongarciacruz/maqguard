@@ -6,5 +6,6 @@ import com.proyectogaes.entity.ReporteFalla;
 
 @Repository
 public interface ReporteFallaRepository extends JpaRepository<ReporteFalla, Long> {
+    long countByEstado(String estado);
     
 }

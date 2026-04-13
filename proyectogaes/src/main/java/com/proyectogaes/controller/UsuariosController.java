@@ -10,6 +10,7 @@ import jakarta.servlet.http.HttpSession;
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.xssf.usermodel.*;
+import org.springframework.security.core.Authentication;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
@@ -37,11 +38,18 @@ public class UsuariosController {
     @Autowired
     private PasswordEncoder passwordEncoder;
 
-    // ── Listar todos los usuarios ─────────────────────────────
+    // ── Listar todos los usuarios ────
     @GetMapping
-    public String index(Model model) {
+    public String index(Model model, Authentication authentication) {
         List<Usuario> usuarios = usuarioRepository.findAll();
         model.addAttribute("usuarios", usuarios);
+
+        // ESTO ES VITAL: Cargar el usuario logueado para que la vista no de error
+        if (authentication != null) {
+            Usuario usuarioSesion = usuarioRepository.findByUsername(authentication.getName()).orElse(null);
+            model.addAttribute("usuarioSesion", usuarioSesion);
+        }
+
         return "usuarios/index";
     }
 
@@ -162,25 +170,6 @@ public class UsuariosController {
 
         usuarioRepository.deleteById(id);
         redirectAttributes.addFlashAttribute("success", "Usuario eliminado correctamente.");
-        return "redirect:/usuarios";
-    }
-
-    // ── Cambiar contraseña ────────────────────────────────────
-    @PostMapping("/cambiar-contrasena/{id}")
-    public String cambiarContrasena(
-            @PathVariable Integer id,
-            @RequestParam String nueva_contrasena,
-            RedirectAttributes redirectAttributes) {
-
-        Optional<Usuario> usuarioOpt = usuarioRepository.findById(id);
-        if (usuarioOpt.isEmpty()) {
-            return "redirect:/usuarios";
-        }
-
-        usuarioOpt.get().setPassword(passwordEncoder.encode(nueva_contrasena));
-        usuarioRepository.save(usuarioOpt.get());
-
-        redirectAttributes.addFlashAttribute("success", "Contraseña actualizada correctamente.");
         return "redirect:/usuarios";
     }
 
@@ -401,24 +390,38 @@ public class UsuariosController {
         return cs;
     }
 
+    @PostMapping("/cambiar-contrasena/{id}")
+    public String cambiarContrasena(@PathVariable Integer id,
+            @RequestParam("nueva_contrasena") String nuevaContrasena,
+            RedirectAttributes ra) {
+        try {
+            Usuario usuario = usuarioRepository.findById(id).orElse(null);
+            if (usuario != null) {
+                // Usa el encoder para que el usuario pueda volver a entrar
+                usuario.setPassword(passwordEncoder.encode(nuevaContrasena));
+                usuarioRepository.save(usuario);
+                ra.addFlashAttribute("success", "Contraseña actualizada correctamente.");
+            }
+        } catch (Exception e) {
+            ra.addFlashAttribute("error", "Error al procesar la solicitud.");
+        }
+        return "redirect:/usuarios";
+    }
+
     // ── Auxiliar: descripción de filtros ──────────────────────
+
     private String construirDescripcionFiltros(String nombre, String estado, String rol) {
-        StringBuilder sb = new StringBuilder("Filtros: ");
-        boolean alguno = false;
+        StringBuilder desc = new StringBuilder();
         if (nombre != null && !nombre.isBlank()) {
-            sb.append("Búsqueda=\"").append(nombre).append("\"  ");
-            alguno = true;
+            desc.append("Nombre/Usuario contiene '").append(nombre).append("'  ");
         }
         if (estado != null && !estado.isBlank()) {
-            sb.append("Estado=\"").append(estado).append("\"  ");
-            alguno = true;
+            desc.append("Estado: ").append(estado).append("  ");
         }
         if (rol != null && !rol.isBlank()) {
-            sb.append("Rol=\"").append(rol).append("\"  ");
-            alguno = true;
+            desc.append("Rol: ").append(rol).append("  ");
         }
-        if (!alguno)
-            sb.append("Ninguno (todos los usuarios)");
-        return sb.toString().trim();
+        return desc.length() > 0 ? desc.toString().trim() : "Sin filtros";
     }
+
 }

@@ -7,7 +7,6 @@
     <title>Admin Panel | MaqGuard</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
-
     <style>
         :root {
             /* Paleta Balanceada */
@@ -139,11 +138,50 @@
             }
         }
 
+        .card-kpi h3 {
+            min-width: 20px;
+            min-height: 28px;
+            display: inline-block;
+        }
+
+        /* Si el valor es 0, podrías ponerlo en gris suave hasta que cargue */
+        .card-kpi h3:empty::before {
+            content: "...";
+            color: var(--text-muted);
+        }
+
         /* Ajuste de badges para fondo claro */
         .badge-light-custom {
             background: rgba(25, 135, 84, 0.1);
             color: #198754;
             border: 1px solid rgba(25, 135, 84, 0.2);
+        }
+
+        .bg-orange {
+            background-color: var(--accent-orange) !important;
+        }
+
+        .text-orange {
+            color: var(--accent-orange) !important;
+        }
+
+        .border-orange {
+            border-color: var(--accent-orange) !important;
+        }
+
+        /* Forzar que el modal esté por encima del fondo oscuro */
+        .modal {
+            z-index: 1060 !important;
+        }
+
+        .modal-backdrop {
+            z-index: 1050 !important;
+        }
+
+        /* Evitar que el scroll del body se bloquee incorrectamente */
+        body.modal-open {
+            overflow: hidden !important;
+            padding-right: 0 !important;
         }
     </style>
 </head>
@@ -192,7 +230,11 @@
                             <span class="fw-bold small d-none d-sm-inline">Admin</span>
                         </a>
                         <ul class="dropdown-menu dropdown-menu-end dropdown-menu-dark shadow border-secondary">
-                            <li><a class="dropdown-item" href="#"><i class="bi bi-person me-2"></i> Perfil</a></li>
+                            <li>
+                                <a class="dropdown-item" href="#" data-bs-toggle="modal" data-bs-target="#modalPerfil">
+                                    <i class="bi bi-person-badge me-2 text-primary"></i> Mi Perfil
+                                </a>
+                            </li>
                             <li><a class="dropdown-item" th:href="@{/usuarios}"><i class="bi bi-person me-2"></i>
                                     gestionar usuarios</a></li>
                             <li>
@@ -238,10 +280,24 @@
                 </div>
             </div>
             <div class="col-md-3 col-6">
+                <div class="card-kpi p-3" style="border-left-color: #f59e0b;">
+                    <div class="d-flex justify-content-between">
+                        <div>
+                            <span class="x-small fw-bold" style="color: var(--text-muted);">STOCK BAJO</span>
+                            <h3 class="mb-0 fw-bold" th:classappend="${repuestosBajos > 0 ? 'text-warning' : ''}"
+                                th:text="${repuestosBajos}">0</h3>
+                        </div>
+                        <div class="kpi-icon-container text-warning" style="background: rgba(245, 158, 11, 0.1);">
+                            <i class="bi bi-box-seam"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3 col-6">
                 <div class="card-kpi p-3" style="border-left-color: #10b981;">
                     <div class="d-flex justify-content-between">
                         <div>
-                            <span class="x-small fw-bold" style="color: var(--text-muted);">PROCESO</span>
+                            <span class="x-small fw-bold" style="color: var(--text-muted);">MANTENIMIENTOS</span>
                             <h3 class="mb-0 fw-bold" th:text="${mantenimientosActivos}">0</h3>
                         </div>
                         <div class="kpi-icon-container text-success" style="background: rgba(16, 185, 129, 0.1);"><i
@@ -250,65 +306,66 @@
                 </div>
             </div>
             <div class="col-md-3 col-6">
-                <div class="card-kpi p-3" style="border-left-color: #f59e0b;">
-                    <div class="d-flex justify-content-between">
-                        <div>
-                            <span class="x-small fw-bold" style="color: var(--text-muted);">STOCK</span>
-                            <h3 class="mb-0 fw-bold" th:text="${repuestosBajos}">0</h3>
-                        </div>
-                        <div class="kpi-icon-container text-warning" style="background: rgba(245, 158, 11, 0.1);"><i
-                                class="bi bi-cart-dash"></i></div>
-                    </div>
-                </div>
-            </div>
-            <div class="col-md-3 col-6">
-                <div class="card-kpi p-3" style="border-left-color: #ef4444;">
+                <div class="card-kpi p-3"
+                    th:styleappend="${alertasFallas > 0 ? 'border-left-color: #ef4444; background: #fff5f5;' : 'border-left-color: #ef4444;'}">
                     <div class="d-flex justify-content-between">
                         <div>
                             <span class="x-small fw-bold" style="color: var(--text-muted);">FALLAS</span>
-                            <h3 class="mb-0 fw-bold" th:text="${alertasFallas}">0</h3>
+                            <h3 class="mb-0 fw-bold" th:classappend="${alertasFallas > 0 ? 'text-danger' : ''}"
+                                th:text="${alertasFallas}">0</h3>
                         </div>
-                        <div class="kpi-icon-container text-danger" style="background: rgba(239, 68, 68, 0.1);"><i
-                                class="bi bi-exclamation-octagon"></i></div>
+                        <div class="kpi-icon-container"
+                            th:classappend="${alertasFallas > 0 ? 'text-danger shadow-sm border border-danger border-opacity-25' : 'text-danger'}"
+                            style="background: rgba(239, 68, 68, 0.1);">
+                            <i class="bi bi-exclamation-octagon"
+                                th:classappend="${alertasFallas > 0 ? 'bi-exclamation-triangle-fill' : ''}"></i>
+                        </div>
                     </div>
                 </div>
             </div>
-        </div>
 
-        <h6 class="fw-bold mb-4 text-uppercase"
-            style="letter-spacing: 1.5px; color: var(--text-muted); font-size: 0.75rem;">Gestión de Módulos</h6>
-        <div class="row g-4">
-            <div class="col-md-3 col-sm-6">
-                <div class="module-card p-4 text-center h-100">
-                    <img th:src="@{/assets/maquina.png}" alt="Máquinas">
-                    <h6 class="fw-bold mb-3">Maquinaria</h6>
-                    <a th:href="@{/maquinas}" class="btn btn-outline-custom btn-sm w-100 stretched-link">Ingresar</a>
+            <h6 class="fw-bold mb-4 text-uppercase"
+                style="letter-spacing: 1.5px; color: var(--text-muted); font-size: 0.75rem;">Gestión de Módulos</h6>
+            <div class="row g-4">
+                <div class="row g-4">
+                    <div class="col-md-3 col-sm-6">
+                        <div class="module-card p-4 text-center h-100 position-relative">
+                            <img th:src="@{/assets/maquina.png}" alt="Máquinas">
+                            <h6 class="fw-bold mb-3">Maquinaria</h6>
+                            <a th:href="@{/maquinas}"
+                                class="btn btn-outline-custom btn-sm w-100 stretched-link">Ingresar</a>
+                        </div>
+                    </div>
+
+                    <div class="col-md-3 col-sm-6">
+                        <div class="module-card p-4 text-center h-100 position-relative">
+                            <img src="https://cdn-icons-png.flaticon.com/128/1291/1291718.png" alt="Inventario">
+                            <h6 class="fw-bold mb-3">Inventario</h6>
+                            <a th:href="@{/inventario}"
+                                class="btn btn-outline-custom btn-sm w-100 stretched-link">Revisar</a>
+                        </div>
+                    </div>
+
+                    <div class="col-md-3 col-sm-6">
+                        <div class="module-card p-4 text-center h-100 position-relative">
+                            <img src="https://cdn-icons-png.flaticon.com/128/7928/7928626.png" alt="Mantenimiento">
+                            <h6 class="fw-bold mb-3">Mantenimiento</h6>
+                            <a th:href="@{/mantenimientos}"
+                                class="btn btn-outline-custom btn-sm w-100 stretched-link">Gestionar</a>
+                        </div>
+                    </div>
+
+                    <div class="col-md-3 col-sm-6">
+                        <div class="module-card p-4 text-center h-100 position-relative">
+                            <img src="https://cdn-icons-png.flaticon.com/512/9071/9071426.png" alt="Usuarios">
+                            <h6 class="fw-bold mb-3">Usuarios</h6>
+                            <a th:href="@{/usuarios}"
+                                class="btn btn-outline-custom btn-sm w-100 stretched-link">Configurar</a>
+                        </div>
+                    </div>
                 </div>
+
             </div>
-            <div class="col-md-3 col-sm-6">
-                <div class="module-card p-4 text-center h-100">
-                    <img src="https://cdn-icons-png.flaticon.com/128/1291/1291718.png" alt="Inventario">
-                    <h6 class="fw-bold mb-3">Inventario</h6>
-                    <a th:href="@{/inventario}" class="btn btn-outline-custom btn-sm w-100 stretched-link">Revisar</a>
-                </div>
-            </div>
-            <div class="col-md-3 col-sm-6">
-                <div class="module-card p-4 text-center h-100">
-                    <img src="https://cdn-icons-png.flaticon.com/128/7928/7928626.png" alt="Mantenimiento">
-                    <h6 class="fw-bold mb-3">Mantenimiento</h6>
-                    <a th:href="@{/mantenimientos}"
-                        class="btn btn-outline-custom btn-sm w-100 stretched-link">Gestionar</a>
-                </div>
-            </div>
-            <div class="col-md-3 col-sm-6">
-                <div class="module-card p-4 text-center h-100">
-                    <img src="https://cdn-icons-png.flaticon.com/512/9071/9071426.png" alt="Usuarios">
-                    <h6 class="fw-bold mb-3">Usuarios</h6>
-                    <a th:href="@{/admin/usuarios}"
-                        class="btn btn-outline-custom btn-sm w-100 stretched-link">Configurar</a>
-                </div>
-            </div>
-        </div>
     </main>
 
     <footer>
@@ -323,6 +380,69 @@
     </footer>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <div class="modal fade" id="modalPerfil" data-bs-backdrop="true" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content border-0 shadow-lg" style="border-radius: 20px;">
+
+                <div class="modal-header border-0 bg-dark text-white" style="border-radius: 20px 20px 0 0;">
+                    <h5 class="modal-title fw-bold"><i class="bi bi-person-circle me-2"></i>Mi Perfil</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+
+                <div class="modal-body p-4">
+                    <div class="text-center mb-4">
+                        <div class="mx-auto shadow-sm d-flex align-items-center justify-content-center bg-light border border-2 border-orange mb-3"
+                            style="width: 80px; height: 80px; border-radius: 50%;">
+                            <i class="bi bi-person-fill text-orange" style="font-size: 2.5rem;"></i>
+                        </div>
+                        <h4 class="fw-bold mb-0" th:text="${usuarioSesion.nombre}">Nombre</h4>
+                        <span class="badge bg-orange bg-opacity-10 text-orange rounded-pill px-3"
+                            th:text="${usuarioSesion.rol.descripcionRol}">Rol</span>
+                    </div>
+
+                    <ul class="nav nav-pills nav-fill mb-4 bg-light rounded-pill p-1" id="pills-tab" role="tablist">
+                        <li class="nav-item">
+                            <button class="nav-link active rounded-pill" id="tab-datos" data-bs-toggle="pill"
+                                data-bs-target="#datos">Mis Datos</button>
+                        </li>
+                        <li class="nav-item">
+                            <button class="nav-link rounded-pill" id="tab-seguridad" data-bs-toggle="pill"
+                                data-bs-target="#seguridad">Seguridad</button>
+                        </li>
+                    </ul>
+
+                    <div class="tab-content">
+                        <div class="tab-pane fade show active" id="datos">
+                            <div class="mb-3">
+                                <label class="small text-muted fw-bold">USUARIO</label>
+                                <div class="p-2 bg-light rounded border-start border-orange border-3">
+                                    <span th:text="${usuarioSesion.username}">username</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="tab-pane fade" id="seguridad">
+                            <form th:action="@{/usuarios/cambiar-contrasena-perfil}" method="post">
+                                <div class="mb-3">
+                                    <label class="small text-muted fw-bold">NUEVA CONTRASEÑA</label>
+                                    <div class="input-group">
+                                        <span class="input-group-text bg-white border-end-0"><i
+                                                class="bi bi-key text-orange"></i></span>
+                                        <input type="password" name="nueva_contrasena"
+                                            class="form-control border-start-0" placeholder="Mínimo 6 caracteres"
+                                            required minlength="6">
+                                    </div>
+                                </div>
+                                <button type="submit" class="btn btn-primary w-100 rounded-pill shadow-sm">Actualizar
+                                    Contraseña</button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
 </body>
 
 </html>
