@@ -190,8 +190,6 @@
                             Inventario</a></li>
                     <li class="nav-item"><a class="nav-link" th:href="@{/mantenimientos}"><i class="bi bi-tools"></i>
                             Mantenimiento</a></li>
-                    <li class="nav-item"><a class="nav-link" th:href="@{/alertas}"><i
-                                class="bi bi-exclamation-triangle"></i> Alertas</a></li>
                 </ul>
 
                 <div class="d-flex align-items-center gap-4">
@@ -394,68 +392,6 @@
             filtroUbicacion.addEventListener('change', filtrar);
         });
     </script>
-    <div class="modal fade" id="modalPerfil" data-bs-backdrop="true" tabindex="-1" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered">
-            <div class="modal-content border-0 shadow-lg" style="border-radius: 20px;">
-
-                <div class="modal-header border-0 bg-dark text-white" style="border-radius: 20px 20px 0 0;">
-                    <h5 class="modal-title fw-bold"><i class="bi bi-person-circle me-2"></i>Mi Perfil</h5>
-                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
-                </div>
-
-                <div class="modal-body p-4">
-                    <div class="text-center mb-4">
-                        <div class="mx-auto shadow-sm d-flex align-items-center justify-content-center bg-light border border-2 border-orange mb-3"
-                            style="width: 80px; height: 80px; border-radius: 50%;">
-                            <i class="bi bi-person-fill text-orange" style="font-size: 2.5rem;"></i>
-                        </div>
-                        <h4 class="fw-bold mb-0" th:text="${usuarioSesion.nombre}">Nombre</h4>
-                        <span class="badge bg-orange bg-opacity-10 text-orange rounded-pill px-3"
-                            th:text="${usuarioSesion.rol.descripcionRol}">Rol</span>
-                    </div>
-
-                    <ul class="nav nav-pills nav-fill mb-4 bg-light rounded-pill p-1" id="pills-tab" role="tablist">
-                        <li class="nav-item">
-                            <button class="nav-link active rounded-pill" id="tab-datos" data-bs-toggle="pill"
-                                data-bs-target="#datos">Mis Datos</button>
-                        </li>
-                        <li class="nav-item">
-                            <button class="nav-link rounded-pill" id="tab-seguridad" data-bs-toggle="pill"
-                                data-bs-target="#seguridad">Seguridad</button>
-                        </li>
-                    </ul>
-
-                    <div class="tab-content">
-                        <div class="tab-pane fade show active" id="datos">
-                            <div class="mb-3">
-                                <label class="small text-muted fw-bold">USUARIO</label>
-                                <div class="p-2 bg-light rounded border-start border-orange border-3">
-                                    <span th:text="${usuarioSesion.username}">username</span>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="tab-pane fade" id="seguridad">
-                            <form th:action="@{/usuarios/cambiar-contrasena-perfil}" method="post">
-                                <div class="mb-3">
-                                    <label class="small text-muted fw-bold">NUEVA CONTRASEÑA</label>
-                                    <div class="input-group">
-                                        <span class="input-group-text bg-white border-end-0"><i
-                                                class="bi bi-key text-orange"></i></span>
-                                        <input type="password" name="nueva_contrasena"
-                                            class="form-control border-start-0" placeholder="Mínimo 6 caracteres"
-                                            required minlength="6">
-                                    </div>
-                                </div>
-                                <button type="submit" class="btn btn-primary w-100 rounded-pill shadow-sm">Actualizar
-                                    Contraseña</button>
-                            </form>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
 </body>
 
 </html>
